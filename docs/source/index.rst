@@ -1,10 +1,10 @@
-.. Foobar documentation master file, created by
-   sphinx-quickstart on Sun Nov 24 16:38:39 2019.
+.. BCI documentation master file, created by
+   sphinx-quickstart on Fri Dec 13 11:10:35 2019.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Foobar's documentation!
-==================================
+Welcome to BCI's documentation!
+===============================
 
 .. toctree::
    :maxdepth: 2
