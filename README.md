@@ -68,7 +68,7 @@ $ python -m bci run_webserver "127.0.0.1:8000" data/
 ....
 ```
 Do note that each command's options should be passed to *that* command, so for 
-example the `-q` and `-t` options should be passed to `project`, not `run_server`, 
+example the `-q` and `-t` options should be passed to `bci`, not `run_server`, 
 `upload_thought` or `run_webserver`.
 
 ```sh
