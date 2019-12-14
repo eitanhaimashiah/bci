@@ -3,7 +3,7 @@
 
 # BCI
 
-See [full documentation](https://advanced-system-design-foobar.readthedocs.io/en/latest/).
+See [full documentation](https://bci.readthedocs.io/en/latest/).
 
 ## Installation
 
