@@ -1,5 +1,4 @@
 import struct
-import time
 from datetime import datetime
 
 
@@ -26,7 +25,7 @@ class Thought:
                and self.thought == other.thought
 
     def serialize(self):
-        timestamp = int(time.mktime(self.timestamp.timetuple()))
+        timestamp = int(self.timestamp.timestamp())
         thought_size = len(self.thought)
         thought_utf = self.thought.encode()
         return struct.pack('LLI',
