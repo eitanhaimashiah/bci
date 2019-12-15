@@ -28,16 +28,16 @@ class Thought:
         timestamp = int(self.timestamp.timestamp())
         thought_size = len(self.thought)
         thought_utf = self.thought.encode()
-        return struct.pack('LLI',
+        return struct.pack('QQI',
                            self.user_id,
                            timestamp,
                            thought_size) + thought_utf
 
     @classmethod
     def deserialize(cls, data):
-        header_size = struct.calcsize('LLI')
+        header_size = struct.calcsize('QQI')
         header, thought_utf = data[:header_size], data[header_size:]
-        user_id, timestamp, thought_size = struct.unpack('LLI', header)
+        user_id, timestamp, thought_size = struct.unpack('QQI', header)
         timestamp = datetime.fromtimestamp(timestamp)
         thought = thought_utf.decode()
         return Thought(user_id, timestamp, thought)

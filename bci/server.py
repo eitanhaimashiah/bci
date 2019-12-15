@@ -20,8 +20,8 @@ class Handler(threading.Thread):
         finally releasing the lock.
         """
         # Receive current connection's data.
-        header = self.conn.receive(struct.calcsize('LLI'))
-        user_id, timestamp, thought_size = struct.unpack('LLI', header)
+        header = self.conn.receive(struct.calcsize('QQI'))
+        user_id, timestamp, thought_size = struct.unpack('QQI', header)
         timestamp = datetime.fromtimestamp(timestamp)
         filename = timestamp.strftime('%Y-%m-%d_%H-%M-%S.txt')
         thought_utf = self.conn.receive(thought_size)
