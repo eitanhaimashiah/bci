@@ -2,7 +2,7 @@ import os
 import sys
 import traceback
 import click
-from bci import run_server, upload_thought, run_webserver, Reader, version
+from bci import run_server, upload_thought, run_webserver, read, version
 
 
 class Log:
@@ -60,11 +60,8 @@ def cli_run_webserver(address, data_dir):
 
 @main.command('read')
 @click.argument('path')
-def read(path):
-    reader = Reader(path)
-    print(reader.user_info())
-    for snapshot in reader:
-        print(snapshot)
+def cli_read(path):
+    log(read(path))
 
 
 if __name__ == '__main__':

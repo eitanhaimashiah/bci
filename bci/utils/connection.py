@@ -1,4 +1,5 @@
 import socket
+import struct
 
 
 class Connection:
@@ -25,6 +26,12 @@ class Connection:
     def send(self, data):
         self.socket.sendall(data)
 
+    def send_message(self, message):
+        message_size = struct.pack('<I', len(message))
+        if isinstance(message, str):
+            message = message.encode()
+        self.send(message_size + message)
+
     def receive(self, size):
         data = b''
         while size > 0:
@@ -36,6 +43,12 @@ class Connection:
             data += chunk
             size -= len(chunk)
         return data
+
+    def receive_message(self):
+        message_size = self.receive(struct.calcsize('<I'))
+        message_size = struct.unpack('<I', message_size)[0]
+        message_utf = self.receive(message_size)
+        return message_utf.decode()
 
     def close(self):
         self.socket.close()

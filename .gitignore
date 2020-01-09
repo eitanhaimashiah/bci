@@ -1,4 +1,7 @@
 .env/
 .pytest_cache/
 docs/build/
+sample.mind.gz
 sample.mind
+snapshots/
+bci/protobuf/bci_pb2.py
