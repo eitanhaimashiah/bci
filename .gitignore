@@ -3,5 +3,5 @@
 docs/build/
 sample.mind.gz
 sample.mind
-snapshots/
+data/
 bci/protobuf/bci_pb2.py

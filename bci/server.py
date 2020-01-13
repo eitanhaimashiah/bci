@@ -1,59 +1,50 @@
-import struct
-import pathlib
-import threading
-from datetime import datetime
-from .utils.listener import Listener
+from flask import Flask, request, jsonify
+from .protobuf.bci_pb2 import UserAndSnapshot
+from .context import Context
+from bci import parsers
+from .parsers import parse_pose, parse_feelings, \
+    ColorImageParser, DepthImageParser, Location3DParser
 
 
-class Handler(threading.Thread):
-    lock = threading.Lock()
-
-    def __init__(self, conn, data_dir):
-        super().__init__()
-        self.conn = conn
-        self.data_dir = data_dir
-
-    def run(self):
-        """
-        Handles current connection by receiving its data, acquiring the lock,
-        writing the user's thought to the appropriate path on disk, and
-        finally releasing the lock.
-        """
-        # Receive current connection's data.
-        header = self.conn.receive(struct.calcsize('QQI'))
-        user_id, timestamp, thought_size = struct.unpack('QQI', header)
-        timestamp = datetime.fromtimestamp(timestamp)
-        filename = timestamp.strftime('%Y-%m-%d_%H-%M-%S.txt')
-        thought_utf = self.conn.receive(thought_size)
-        thought = thought_utf.decode()
-
-        self.lock.acquire()
-        try:
-            # If the user directory doesn't exist, create it.
-            user_data_dir = pathlib.Path(self.data_dir) / str(user_id)
-            if not user_data_dir.exists():
-                user_data_dir.mkdir(parents=True, exist_ok=True)
-
-            # Write the user's thought to disk.
-            path = user_data_dir / filename
-            if path.exists():
-                thought = f'\n{thought}'
-            with path.open(mode='a') as f:
-                f.write(thought)
-
-        finally:
-            self.conn.close()
-            self.lock.release()
+def _flatten(l):
+    gather = []
+    for item in l:
+        if isinstance(item, tuple):
+            gather.extend(item)
+        else:
+            gather.append(item)
+    return gather
 
 
-def run_server(address, data_dir):
+def run_server(address):
     """Run the server."""
     host, port = address
-    with Listener(port, host) as listener:
-        try:
-            while True:
-                conn = listener.accept()
-                handler = Handler(conn, data_dir)
-                handler.start()
-        except KeyboardInterrupt:
-            pass
+    app = Flask(__name__)
+    context = Context()
+    user_snapshot = UserAndSnapshot()
+    color_image_parser = ColorImageParser()
+    depth_image_parser = DepthImageParser()
+    fields = list(set(_flatten(list(map(lambda x: x.field,
+                                        parsers.__all__)))))
+
+    @app.route('/config', methods=['GET'])
+    def get_config():
+        print(fields)
+        return jsonify({'fields': fields, 'return_value': 3, 'error': None})
+
+    @app.route('/snapshot', methods=['POST'])
+    def post_snapshot():
+        user_snapshot.ParseFromString(request.data)
+        user = user_snapshot.user
+        snapshot = user_snapshot.snapshot
+        context.set(user.user_id, snapshot.datetime)
+
+        # Apply parsers
+        parse_pose(context, snapshot)
+        parse_feelings(context, snapshot)
+        color_image_parser.parse(context, snapshot)
+        depth_image_parser.parse(context, snapshot)
+
+        return jsonify({'return_value': 3, 'error': None})
+
+    app.run(host=host, port=port, debug=True)

@@ -1,5 +1,10 @@
 syntax = "proto3";
 
+message UserAndSnapshot {
+    User user = 1;
+    Snapshot snapshot = 2;
+}
+
 message User {
     enum Gender {
         MALE = 0;

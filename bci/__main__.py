@@ -2,7 +2,7 @@ import os
 import sys
 import traceback
 import click
-from bci import run_server, upload_thought, run_webserver, read, version
+from bci import run_server, upload_snapshots, run_webserver, read, version
 
 
 class Log:
@@ -38,17 +38,15 @@ def main(quiet=False, traceback=False):
 
 @main.command('run_server')
 @click.argument('address')
-@click.argument('data_dir')
-def cli_run_server(address, data_dir):
-    log(run_server(splitted(address), data_dir))
+def cli_run_server(address):
+    log(run_server(splitted(address)))
 
 
-@main.command('upload_thought')
+@main.command('upload_snapshots')
 @click.argument('address')
-@click.argument('user', type=int)
-@click.argument('thought')
-def cli_upload_thought(address, user, thought):
-    log(upload_thought(splitted(address), user, thought))
+@click.argument('path')
+def cli_upload_thought(address, path):
+    log(upload_snapshots(splitted(address), path))
 
 
 @main.command('run_webserver')
