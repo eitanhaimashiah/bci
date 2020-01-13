@@ -36,13 +36,23 @@ def main(quiet=False, traceback=False):
     log.traceback = traceback
 
 
-@main.command('run_server')
+@main.group()
+def server():
+    pass
+
+
+@server.command('run')
 @click.argument('address')
 def cli_run_server(address):
     log(run_server(splitted(address)))
 
 
-@main.command('upload_snapshots')
+@main.group()
+def client():
+    pass
+
+
+@client.command('run')
 @click.argument('address')
 @click.argument('path')
 def cli_upload_thought(address, path):
