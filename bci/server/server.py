@@ -1,9 +1,9 @@
-from flask import Flask, request, jsonify
-from .protobuf.bci_pb2 import UserAndSnapshot
-from .context import Context
-from bci import parsers
-from .parsers import parse_pose, parse_feelings, \
-    ColorImageParser, DepthImageParser, Location3DParser
+from flask import Flask, request
+from ..utils.sample.sample_pb2 import AssociatedSnapshot
+from ..utils.context import Context
+from .. import parsers
+from ..parsers import parse_pose, parse_feelings, \
+    ColorImageParser, DepthImageParser
 
 
 def _flatten(l):
@@ -16,21 +16,21 @@ def _flatten(l):
     return gather
 
 
-def run_server(address):
+def run_server(host, port):
     """Run the server."""
-    host, port = address
     app = Flask(__name__)
     context = Context()
-    user_snapshot = UserAndSnapshot()
+    user_snapshot = AssociatedSnapshot()
     color_image_parser = ColorImageParser()
     depth_image_parser = DepthImageParser()
     fields = list(set(_flatten(list(map(lambda x: x.field,
-                                        parsers.__all__)))))
+                                        parsers.__all__))))) + ['datetime']
 
     @app.route('/config', methods=['GET'])
     def get_config():
         print(fields)
-        return jsonify({'fields': fields, 'return_value': 3, 'error': None})
+        # return jsonify({'fields': fields, 'return_value': 3, 'error': None})
+        return {'fields': fields}
 
     @app.route('/snapshot', methods=['POST'])
     def post_snapshot():
@@ -45,6 +45,7 @@ def run_server(address):
         color_image_parser.parse(context, snapshot)
         depth_image_parser.parse(context, snapshot)
 
-        return jsonify({'return_value': 3, 'error': None})
+        # return jsonify({'return_value': 3, 'error': None})
+        return {}
 
     app.run(host=host, port=port, debug=True)

@@ -4,4 +4,3 @@ docs/build/
 sample.mind.gz
 sample.mind
 data/
-bci/protobuf/bci_pb2.py

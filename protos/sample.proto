@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-message UserAndSnapshot {
+message AssociatedSnapshot {
     User user = 1;
     Snapshot snapshot = 2;
 }

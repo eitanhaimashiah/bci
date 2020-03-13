@@ -1,7 +1,7 @@
 import pathlib
 import datetime as dt
 
-_ROOT = pathlib.Path(__file__).absolute().parent.parent
+_ROOT = pathlib.Path(__file__).absolute().parent.parent.parent
 _DATA_DIR = _ROOT / 'data'
 
 
