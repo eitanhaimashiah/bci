@@ -1,9 +1,6 @@
 from flask import Flask, request
-from ..utils.sample.sample_pb2 import AssociatedSnapshot
-from ..utils.context import Context
-from .. import parsers
-from ..parsers import parse_pose, parse_feelings, \
-    ColorImageParser, DepthImageParser
+from ..protocol.sample_pb2 import AssociatedSnapshot
+from ..defaults import DEFAULT_SERVER_IP, DEFAULT_SERVER_PORT
 
 
 def _flatten(l):
@@ -16,36 +13,38 @@ def _flatten(l):
     return gather
 
 
-def run_server(host, port):
-    """Run the server."""
+def run_server(publish, host=None, port=None):
+    """Listens on `host:port` and passes received messages to `publish`.
+
+    Args:
+        publish (function): Publishing function.
+        host (:obj:`str`, optional): Server's IP address. Default to
+            `DEFAULT_SERVER_IP`.
+        port (:obj:`int`, optional): Server's port. Default to
+            `DEFAULT_SERVER_PORT`.
+
+    Returns:
+        bool: True if successful, False otherwise.
+
+    Raises:
+        TODO Complete
+
+    """
+    # TODO Check this function again
+    host = host or DEFAULT_SERVER_IP
+    port = port or DEFAULT_SERVER_PORT
     app = Flask(__name__)
-    context = Context()
-    user_snapshot = AssociatedSnapshot()
-    color_image_parser = ColorImageParser()
-    depth_image_parser = DepthImageParser()
-    fields = list(set(_flatten(list(map(lambda x: x.field,
-                                        parsers.__all__))))) + ['datetime']
+    fields = ['color_image', 'depth_image', 'feelings', 'pose']  # TODO Change it to the appropriate function
 
     @app.route('/config', methods=['GET'])
     def get_config():
-        print(fields)
-        # return jsonify({'fields': fields, 'return_value': 3, 'error': None})
         return {'fields': fields}
 
     @app.route('/snapshot', methods=['POST'])
     def post_snapshot():
+        user_snapshot = AssociatedSnapshot()
         user_snapshot.ParseFromString(request.data)
-        user = user_snapshot.user
-        snapshot = user_snapshot.snapshot
-        context.set(user.user_id, snapshot.datetime)
-
-        # Apply parsers
-        parse_pose(context, snapshot)
-        parse_feelings(context, snapshot)
-        color_image_parser.parse(context, snapshot)
-        depth_image_parser.parse(context, snapshot)
-
-        # return jsonify({'return_value': 3, 'error': None})
+        publish(user_snapshot)
         return {}
 
-    app.run(host=host, port=port, debug=True)
+    app.run(host=host, port=port, threaded=True, debug=True)

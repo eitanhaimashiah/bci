@@ -1,28 +1,43 @@
 import requests
-from ..reader import Reader
-from ..utils.sample.sample_pb2 import AssociatedSnapshot
+from .reader import Reader
+from ..protocol.sample_pb2 import Snapshot, AssociatedSnapshot
+from ..defaults import DEFAULT_SERVER_IP, DEFAULT_SERVER_PORT, DEFAULT_FORMAT
 
 
-def _clear_non_requested_fields(snapshot, requested_fields):
-    all_fields = snapshot.DESCRIPTOR.fields_by_name.keys()
-    non_requested_fields = set(all_fields) - set(requested_fields)
-    for field in non_requested_fields:
-        snapshot.ClearField(field)
+def upload_sample(path, host=None, port=None, format=None):
+    """Reads the sample file from `path` and uploads it to the server
+    listening on `host:port`.
 
+    Args:
+        path (str): Path of the sample file.
+        host (:obj:`str`, optional): Server's IP address. Default to
+            `DEFAULT_SERVER_IP`.
+        port (:obj:`int`, optional): Server's port. Default to
+            `DEFAULT_SERVER_PORT`.
+        format (:obj:`str`, optional): Format of the sample file.
+            Default to `DEFAULT_FORMAT`
 
-def upload_sample(host, port, path, fmt='protobuf'):
-    """Uploads snapshots from the specified path to the server sourced at `host:port`."""
+    Returns:
+        bool: True if successful, False otherwise.
+
+    Raises:
+        TODO Complete
+
+    """
+    # TODO Check this function again
+    host = host or DEFAULT_SERVER_IP
+    port = port or DEFAULT_SERVER_PORT
+    format = format or DEFAULT_FORMAT
     url = f'http://{host}:{port}'
-    reader = Reader(path, fmt)
-    associated_snapshot = AssociatedSnapshot()
-
-    requested_fields = requests.get(f'{url}/config').json()['fields']
+    reader = Reader(path, format)
+    config = requests.get(f'{url}/config').json()['fields']
     for snapshot in reader:
-        _clear_non_requested_fields(snapshot, requested_fields)
-        associated_snapshot.user.CopyFrom(reader.user)
-        associated_snapshot.snapshot.CopyFrom(snapshot)
+        fields = {field: getattr(snapshot, field) for field in config}
+        snapshot = Snapshot(datetime=snapshot.datetime, **fields)
+        associated_snapshot = AssociatedSnapshot(user=reader.user, snapshot=snapshot)
         requests.post(f'{url}/snapshot', associated_snapshot.SerializeToString())
         print('sent')
     print('done')
+    return True
 
 

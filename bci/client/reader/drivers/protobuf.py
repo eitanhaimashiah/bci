@@ -1,6 +1,6 @@
 import struct
 import gzip
-from ...utils.sample.sample_pb2 import User, Snapshot
+from ....protocol.sample_pb2 import User, Snapshot
 
 
 class ProtobufDriver:

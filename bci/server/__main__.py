@@ -1,17 +1,24 @@
 import click
 from .server import run_server
 
+
 @click.group()
-def server():
+def cli():
     pass
 
 
-@server.command('run-server')
-@click.option('--host', '-h', default='127.0.0.1')
-@click.option('--port', '-p', default=8000)
-def cli_run_server(host, port):
-    run_server(host, port)
+@cli.command('run-server')
+@click.option('--host', '-h')
+@click.option('--port', '-p', type=int)
+@click.argument('mq')
+def cli_run_server(host, port, mq):
+    # TODO Run a message queue, and then pass the approripate publishing function
+    run_server(host=host, port=port, publish=print_message)
+
+
+def print_message(message):
+    print(message)
 
 
 if __name__ == '__main__':
-    server(prog_name='bci.server', obj={})
+    cli(prog_name='bci.server')

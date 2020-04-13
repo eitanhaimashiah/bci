@@ -1,20 +1,20 @@
 import click
-from .client import upload_sample
+from . import upload_sample
 
 
 @click.group()
-def client():
+def cli():
     pass
 
 
-@client.command('upload-sample')
-@click.option('--host', '-h', default='127.0.0.1')
-@click.option('--port', '-p', default=8000)
-@click.option('--fmt', '-f', default='protobuf')
+@cli.command('upload-sample')
+@click.option('--host', '-h')
+@click.option('--port', '-p', type=int)
+@click.option('--format', '-f')
 @click.argument('path', type=click.Path())
-def cli_upload_sample(host, port, path, fmt):
-    upload_sample(host, port, path, fmt)
+def cli_upload_sample(host, port, format, path):
+    upload_sample(host=host, port=port, format=format, path=path)
 
 
 if __name__ == '__main__':
-    client(prog_name='bci.client', obj={})
+    cli(prog_name='bci.client')

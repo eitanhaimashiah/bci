@@ -1,0 +1,17 @@
+# Client Defaults
+DEFAULT_FORMAT = 'protobuf'
+
+# Server Defaults
+DEFAULT_SERVER_IP = '127.0.0.1'
+DEFAULT_SERVER_PORT = 8000
+
+# Default Database
+DEFAULT_DATABASE = 'postgresql://127.0.0.1:5432'
+
+# API Server Defaults
+DEFAULT_API_SERVER_IP = '127.0.0.1'
+DEFAULT_API_SERVER_PORT = 5000
+
+# Web Server Defaults
+DEFAULT_WEB_SERVER_IP = '127.0.0.1'
+DEFAULT_WEB_SERVER_PORT = 8080

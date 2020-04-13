@@ -12,6 +12,7 @@ Pygments==2.4.2
 pyparsing==2.4.5
 pytest==5.3.1
 pytest-cov==2.8.1
+pytest-integration==0.2.0
 requests==2.22.0
 six==1.13.0
 urllib3==1.25.7
@@ -26,3 +27,5 @@ protobuf==3.11.2
 matplotlib==3.1.2
 grpcio==1.26.0
 grpcio-tools==1.26.0
+pika==1.1.0
+

@@ -2,6 +2,8 @@ import os
 import pathlib
 from datetime import datetime
 from flask import Flask
+from ..defaults import DEFAULT_WEB_SERVER_IP, DEFAULT_WEB_SERVER_PORT, \
+    DEFAULT_API_SERVER_IP, DEFAULT_API_SERVER_PORT
 
 
 _HTML = '''
@@ -39,8 +41,37 @@ _USER_ROW = '''
 '''
 
 
-def run_webserver(address, data_dir):
-    host, port = address
+def run_server(host=None, port=None, api_host=None, api_port=None):
+    """Listens on `host:port`, consumes the API and reflects it.
+
+    TODO Another option is: a separate web server that queries the
+        database and returns the results "baked" into HTML.
+        Check what's better or easier to implement
+
+    Args:
+        host (:obj:`str`, optional): Web server's IP address. Default
+            to `DEFAULT_WEB_SERVER_IP`.
+        port (:obj:`int`, optional): Web server's port. Default to
+            `DEFAULT_WEB_SERVER_PORT`.
+        api_host (:obj:`str`, optional): API server's IP address.
+            Default to `DEFAULT_API_SERVER_IP`.
+        api_port (:obj:`int`, optional): API server's port. Default to
+            `DEFAULT_API_SERVER_PORT`.
+
+
+    Returns:
+        bool: True if successful, False otherwise.
+
+    Raises:
+        TODO Complete
+
+    """
+    # TODO Update this function and exclude `data_dir`
+    host = host or DEFAULT_WEB_SERVER_IP
+    port = port or DEFAULT_WEB_SERVER_PORT
+    api_host = api_host or DEFAULT_API_SERVER_IP
+    api_port = api_port or DEFAULT_API_SERVER_PORT
+    data_dir = None
     app = Flask(__name__)
     data_dir = pathlib.Path(data_dir)
 

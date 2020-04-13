@@ -3,6 +3,17 @@
 
 # BCI
 
+Brain Computer Interface (BCI) is a system that can read minds, and upload 
+snapshots of cognitions. Our system includes a [client](#the-client), which 
+streams cognition snapshots to a [server](#the-server), which then publishes 
+them to a [message queue](#the-message-queue-and-the-parses), where multiple 
+[parsers](#the-message-queue-and-the-parses) read the snapshot, parse various 
+parts of it, and publish the parsed results, which are then saved to a 
+[database](#the-database-and-the-savers). The results are then exposed via a 
+RESTful [API](#the-api), which is consumed by a [CLI](#the-cli); there's also 
+a [GUI](#the-guiE
+), which visualizes the results in various ways.
+
 See [full documentation](https://bci.readthedocs.io/en/latest/).
 
 ## Installation
@@ -24,12 +35,28 @@ See [full documentation](https://bci.readthedocs.io/en/latest/).
     [bci] $ # you're good to go!
     ```
 
-3. To check that everything is working as expected, run the tests:
+## Running the whole pipeline
+
+1. To run the container of each component in the pipeline, execute: 
+
+    ```sh
+    $ ./scripts/run-pipeline.sh
+    ...
+    ```
+
+2. To check that everything is working as expected, run the tests:
 
     ```sh
     $ pytest tests/
     ...
     ```
+   
+3. Once the above is done, you can do the following:
+    * Invoke the [client](#the-client) to upload a sample to the server 
+    running on http://localhost:8080.
+    * 
+
+    
 
 ## Usage
 
@@ -76,3 +103,24 @@ $ python -m bci run_server -q "127.0.0.1:5000" data/ # this doesn't work
 ERROR: no such option: -q
 $ python -m bci -q run_server "127.0.0.1:5000" data/ # this does work
 ```
+
+## The components
+
+### The client
+<!-- TODO Describe how a user can add a new driver -->
+
+### The server
+
+### The message queue and the parses
+<!-- TODO Provide documentation about how to add a new parser: 
+what would I need to do to be able to have the parse command invoke 
+my own code, and the run-parser command to run it as a service 
+working with a message queue. -->
+
+### The database and the savers
+
+### The API
+ 
+### The CLI
+
+### The GUI

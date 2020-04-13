@@ -9,10 +9,10 @@ def reader():
 
 @reader.command('read')
 @click.argument('path', type=click.Path())
-@click.argument('fmt')
-def cli_read(path, fmt):
-    read(path, fmt)
+@click.argument('format')
+def cli_read(path, format):
+    read(path, format)
 
 
 if __name__ == '__main__':
-    reader(prog_name='bci.reader', obj={})
+    reader(prog_name='bci.reader')
