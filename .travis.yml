@@ -3,7 +3,9 @@ python:
   - "3.8"
 install:
   - pip install -r requirements.txt
+  - python -m grpc.tools.protoc -I=protos --python_out=bci/protocol sample.proto
 script:
+  - flake8
   - pytest --cov-report term --cov=bci
 after_success:
   - codecov

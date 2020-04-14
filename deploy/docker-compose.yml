@@ -1,0 +1,126 @@
+version: '2.0'
+services:
+    server:
+        image: bci
+        ports:
+            - "${SERVER_PORT}:${SERVER_PORT}"
+        volumes:
+            - bcivolume01:/bci/data
+        depends_on:
+            - rabbitmq
+        command:
+            /wait-for-it.sh rabbitmq:${RABBITMQ_PORT} --
+            python -m bci.server run-server -h server -p ${SERVER_PORT} rabbitmq://rabbitmq:${RABBITMQ_PORT}/
+
+    rabbitmq:
+        image: rabbitmq
+        ports:
+            - "${RABBITMQ_PORT}:${RABBITMQ_PORT}"
+
+    postgres:
+        image: postgres
+        environment:
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        ports:
+            - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+
+    pose:
+        image: bci
+        depends_on:
+            - rabbitmq
+        volumes:
+            - bcivolume01:/bci/data
+        command:
+            /wait-for-it.sh rabbitmq:${RABBITMQ_PORT} --
+            python -m bci.parsers run-parser pose rabbitmq://rabbitmq:${RABBITMQ_PORT}/
+
+    feelings:
+        image: bci
+        depends_on:
+            - rabbitmq
+        volumes:
+            - bcivolume01:/bci/data
+        command:
+            /wait-for-it.sh rabbitmq:${RABBITMQ_PORT} --
+            python -m bci.parsers run-parser feelings rabbitmq://rabbitmq:${RABBITMQ_PORT}/
+
+    user:
+        image: bci
+        depends_on:
+            - rabbitmq
+        volumes:
+            - bcivolume01:/bci/data
+        command:
+            /wait-for-it.sh rabbitmq:${RABBITMQ_PORT} --
+            python -m bci.parsers run-parser user rabbitmq://rabbitmq:${RABBITMQ_PORT}/
+
+    color_image:
+        image: bci
+        depends_on:
+            - rabbitmq
+        volumes:
+            - bcivolume01:/bci/data
+        command:
+            /wait-for-it.sh rabbitmq:${RABBITMQ_PORT} --
+            python -m bci.parsers run-parser color_image rabbitmq://rabbitmq:${RABBITMQ_PORT}/
+
+    depth_image:
+        image: bci
+        depends_on:
+            - rabbitmq
+        volumes:
+            - bcivolume01:/bci/data
+        command:
+            /wait-for-it.sh rabbitmq:${RABBITMQ_PORT} --
+            python -m bci.parsers run-parser depth_image rabbitmq://rabbitmq:${RABBITMQ_PORT}/
+
+    snapshot_meta:
+        image: bci
+        depends_on:
+            - rabbitmq
+        volumes:
+            - bcivolume01:/bci/data
+        command:
+            /wait-for-it.sh rabbitmq:${RABBITMQ_PORT} --
+            python -m bci.parsers run-parser snapshot_meta rabbitmq://rabbitmq:${RABBITMQ_PORT}/
+
+    saver:
+        image: bci
+        depends_on:
+            - rabbitmq
+            - postgres
+        command:
+            /wait-for-it.sh rabbitmq:${RABBITMQ_PORT} --
+            /wait-for-it.sh postgres:${POSTGRES_PORT} --
+            python -m bci.saver run-saver postgresql://postgres:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT} \
+                rabbitmq://rabbitmq:${RABBITMQ_PORT}/
+
+    api_server:
+        image: bci
+        ports:
+            - "${API_SERVER_PORT}:${API_SERVER_PORT}"
+        volumes:
+            - bcivolume01:/bci/data
+        depends_on:
+            - postgres
+        command:
+            /wait-for-it.sh postgres:${POSTGRES_PORT} --
+            python -m bci.api run-server -h api_server -p ${API_SERVER_PORT} \
+                -d postgresql://postgres:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}
+
+    web_server:
+        image: bci
+        ports:
+            - "${WEB_SERVER_PORT}:${WEB_SERVER_PORT}"
+        volumes:
+            - bcivolume01:/bci/data
+        depends_on:
+            - api_server
+        command:
+            /wait-for-it.sh api_server:${API_SERVER_PORT} --
+            python -m bci.gui run-server -h web_server -p ${web_SERVER_PORT} \
+                -H api_server -P ${API_SERVER_PORT}
+
+
+volumes:
+    bcivolume01: {}
