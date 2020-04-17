@@ -1,13 +1,11 @@
 import click
+import sys
+
 from ..defaults import DEFAULT_API_SERVER_IP, DEFAULT_API_SERVER_PORT
+from ..utils.cli import main, log
 
 
-@click.group()
-def cli():
-    pass
-
-
-@cli.command('get-users')
+@main.command('get-users')
 @click.option('--host', '-h')
 @click.option('--port', '-p', type=int)
 def cli_get_users(host, port):
@@ -17,7 +15,7 @@ def cli_get_users(host, port):
     pass
 
 
-@cli.command('get-user')
+@main.command('get-user')
 @click.option('--host', '-h')
 @click.option('--port', '-p', type=int)
 @click.argument('user_id', type=int)
@@ -28,7 +26,7 @@ def cli_get_user(host, port, user_id):
     pass
 
 
-@cli.command('get-snapshots')
+@main.command('get-snapshots')
 @click.option('--host', '-h')
 @click.option('--port', '-p', type=int)
 @click.argument('user_id', type=int)
@@ -39,7 +37,7 @@ def cli_get_snapshots(host, port, user_id):
     pass
 
 
-@cli.command('get-snapshot')
+@main.command('get-snapshot')
 @click.option('--host', '-h')
 @click.option('--port', '-p', type=int)
 @click.argument('user_id', type=int)
@@ -51,16 +49,17 @@ def cli_get_snapshot(host, port, user_id, snapshot_id):
     pass
 
 
-# TODO Accept the `-s/--save` flag properly
-@cli.command('get-result')
+# TODO If `save` specified, receives a path, and saves the result's
+#  data to that pathAccept the `-s/--save` flag properly
+@main.command('get-result')
 @click.option('--host', '-h')
 @click.option('--port', '-p', type=int)
+@click.option('--save', '-s', is_flag=True, default=False)
 @click.argument('user_id', type=int)
 @click.argument('snapshot_id', type=int)
 @click.argument('topic')
-# @click.option('--save', '-s', type=bool)
 # @click.argument('path')
-def cli_get_result(host, port, user_id, snapshot_id, topic):
+def cli_get_result(host, port, save, user_id, snapshot_id, topic):
     host = host or DEFAULT_API_SERVER_IP
     port = port or DEFAULT_API_SERVER_PORT
     # TODO Complete
@@ -68,4 +67,8 @@ def cli_get_result(host, port, user_id, snapshot_id, topic):
 
 
 if __name__ == '__main__':
-    cli(prog_name='bci.cli')
+    try:
+        main(prog_name='bci.cli')
+    except Exception as error:
+        log(f'ERROR: {error}')
+        sys.exit(1)

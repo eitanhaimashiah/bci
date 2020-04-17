@@ -1,4 +1,8 @@
-# Client Defaults
+# CLI Defaults
+DEFAULT_QUIET = False
+DEFAULT_TRACEBACK = False
+
+# Reader Defaults
 DEFAULT_FORMAT = 'protobuf'
 
 # Server Defaults

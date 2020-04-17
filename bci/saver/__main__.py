@@ -1,13 +1,11 @@
 import click
+import sys
+
 from . import Saver
+from ..utils.cli import main, log
 
 
-@click.group()
-def cli():
-    pass
-
-
-@cli.command('save')
+@main.command('save')
 @click.option('--database', '-d')
 @click.argument('topic')
 @click.argument('path', type=click.Path())
@@ -18,7 +16,7 @@ def cli_save(database, topic, path):
     saver.save(topic, data)
 
 
-@cli.command('run-saver')
+@main.command('run-saver')
 @click.argument('db')
 @click.argument('mq')
 def cli_run_saver(db, mq):
@@ -30,4 +28,8 @@ def cli_run_saver(db, mq):
 
 
 if __name__ == '__main__':
-    cli(prog_name='bci.saver')
+    try:
+        main(prog_name='bci.saver')
+    except Exception as error:
+        log(f'ERROR: {error}')
+        sys.exit(1)

@@ -1,6 +1,6 @@
 import requests
-from .reader import Reader
-from ..protocol.sample_pb2 import Snapshot, AssociatedSnapshot
+from ..reader import Reader
+from ..protocol.sample_pb2 import Snapshot
 from ..defaults import DEFAULT_SERVER_IP, DEFAULT_SERVER_PORT, DEFAULT_FORMAT
 
 
@@ -34,7 +34,8 @@ def upload_sample(path, host=None, port=None, format=None):
     for snapshot in reader:
         fields = {field: getattr(snapshot, field) for field in config}
         snapshot = Snapshot(datetime=snapshot.datetime, **fields)
-        associated_snapshot = AssociatedSnapshot(user=reader.user, snapshot=snapshot)
+        # associated_snapshot = AssociatedSnapshot(user=reader.user, snapshot=snapshot)
+        associated_snapshot = None
         requests.post(f'{url}/snapshot', associated_snapshot.SerializeToString())
         print('sent')
     print('done')

@@ -1,13 +1,11 @@
 import click
+import sys
+
 from . import run_parser
+from ..utils.cli import main, log
 
 
-@click.group()
-def cli():
-    pass
-
-
-@cli.command('parse')
+@main.command('parse')
 @click.argument('topic')
 @click.argument('path', type=click.Path())
 def cli_parse(topic, path):
@@ -16,7 +14,7 @@ def cli_parse(topic, path):
     run_parser(topic=topic, data=data)
 
 
-@cli.command('run-parser')
+@main.command('run-parser')
 @click.argument('topic')
 @click.argument('mq')
 def cli_run_parser(topic, mq):
@@ -26,4 +24,8 @@ def cli_run_parser(topic, mq):
 
 
 if __name__ == '__main__':
-    cli(prog_name='bci.parsers')
+    try:
+        main(prog_name='bci.parsers')
+    except Exception as error:
+        log(f'ERROR: {error}')
+        sys.exit(1)

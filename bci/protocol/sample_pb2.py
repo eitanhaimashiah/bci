@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x0csample.proto\"F\n\x12\x41ssociatedSnapshot\x12\x13\n\x04user\x18\x01 \x01(\x0b\x32\x05.User\x12\x1b\n\x08snapshot\x18\x02 \x01(\x0b\x32\t.Snapshot\"\x84\x01\n\x04User\x12\x0f\n\x07user_id\x18\x01 \x01(\x04\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x10\n\x08\x62irthday\x18\x03 \x01(\r\x12\x1c\n\x06gender\x18\x04 \x01(\x0e\x32\x0c.User.Gender\")\n\x06Gender\x12\x08\n\x04MALE\x10\x00\x12\n\n\x06\x46\x45MALE\x10\x01\x12\t\n\x05OTHER\x10\x02\"\x92\x01\n\x08Snapshot\x12\x10\n\x08\x64\x61tetime\x18\x01 \x01(\x04\x12\x13\n\x04pose\x18\x02 \x01(\x0b\x32\x05.Pose\x12 \n\x0b\x63olor_image\x18\x03 \x01(\x0b\x32\x0b.ColorImage\x12 \n\x0b\x64\x65pth_image\x18\x04 \x01(\x0b\x32\x0b.DepthImage\x12\x1b\n\x08\x66\x65\x65lings\x18\x05 \x01(\x0b\x32\t.Feelings\"\xb8\x01\n\x04Pose\x12&\n\x0btranslation\x18\x01 \x01(\x0b\x32\x11.Pose.Translation\x12 \n\x08rotation\x18\x02 \x01(\x0b\x32\x0e.Pose.Rotation\x1a.\n\x0bTranslation\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\x12\t\n\x01z\x18\x03 \x01(\x01\x1a\x36\n\x08Rotation\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\x12\t\n\x01z\x18\x03 \x01(\x01\x12\t\n\x01w\x18\x04 \x01(\x01\"9\n\nColorImage\x12\r\n\x05width\x18\x01 \x01(\r\x12\x0e\n\x06height\x18\x02 \x01(\r\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\x0c\"9\n\nDepthImage\x12\r\n\x05width\x18\x01 \x01(\r\x12\x0e\n\x06height\x18\x02 \x01(\r\x12\x0c\n\x04\x64\x61ta\x18\x03 \x03(\x02\"Q\n\x08\x46\x65\x65lings\x12\x0e\n\x06hunger\x18\x01 \x01(\x02\x12\x0e\n\x06thirst\x18\x02 \x01(\x02\x12\x12\n\nexhaustion\x18\x03 \x01(\x02\x12\x11\n\thappiness\x18\x04 \x01(\x02\x62\x06proto3')
+  serialized_pb=_b('\n\x0csample.proto\"\x84\x01\n\x04User\x12\x0f\n\x07user_id\x18\x01 \x01(\x04\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x10\n\x08\x62irthday\x18\x03 \x01(\r\x12\x1c\n\x06gender\x18\x04 \x01(\x0e\x32\x0c.User.Gender\")\n\x06Gender\x12\x08\n\x04MALE\x10\x00\x12\n\n\x06\x46\x45MALE\x10\x01\x12\t\n\x05OTHER\x10\x02\"\x92\x01\n\x08Snapshot\x12\x10\n\x08\x64\x61tetime\x18\x01 \x01(\x04\x12\x13\n\x04pose\x18\x02 \x01(\x0b\x32\x05.Pose\x12 \n\x0b\x63olor_image\x18\x03 \x01(\x0b\x32\x0b.ColorImage\x12 \n\x0b\x64\x65pth_image\x18\x04 \x01(\x0b\x32\x0b.DepthImage\x12\x1b\n\x08\x66\x65\x65lings\x18\x05 \x01(\x0b\x32\t.Feelings\"\xb8\x01\n\x04Pose\x12&\n\x0btranslation\x18\x01 \x01(\x0b\x32\x11.Pose.Translation\x12 \n\x08rotation\x18\x02 \x01(\x0b\x32\x0e.Pose.Rotation\x1a.\n\x0bTranslation\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\x12\t\n\x01z\x18\x03 \x01(\x01\x1a\x36\n\x08Rotation\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\x12\t\n\x01z\x18\x03 \x01(\x01\x12\t\n\x01w\x18\x04 \x01(\x01\"9\n\nColorImage\x12\r\n\x05width\x18\x01 \x01(\r\x12\x0e\n\x06height\x18\x02 \x01(\r\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\x0c\"9\n\nDepthImage\x12\r\n\x05width\x18\x01 \x01(\r\x12\x0e\n\x06height\x18\x02 \x01(\r\x12\x0c\n\x04\x64\x61ta\x18\x03 \x03(\x02\"Q\n\x08\x46\x65\x65lings\x12\x0e\n\x06hunger\x18\x01 \x01(\x02\x12\x0e\n\x06thirst\x18\x02 \x01(\x02\x12\x12\n\nexhaustion\x18\x03 \x01(\x02\x12\x11\n\thappiness\x18\x04 \x01(\x02\x62\x06proto3')
 )
 
 
@@ -46,48 +46,10 @@ _USER_GENDER = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=180,
-  serialized_end=221,
+  serialized_start=108,
+  serialized_end=149,
 )
 _sym_db.RegisterEnumDescriptor(_USER_GENDER)
-
-
-_ASSOCIATEDSNAPSHOT = _descriptor.Descriptor(
-  name='AssociatedSnapshot',
-  full_name='AssociatedSnapshot',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='user', full_name='AssociatedSnapshot.user', index=0,
-      number=1, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='snapshot', full_name='AssociatedSnapshot.snapshot', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=16,
-  serialized_end=86,
-)
 
 
 _USER = _descriptor.Descriptor(
@@ -138,8 +100,8 @@ _USER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=89,
-  serialized_end=221,
+  serialized_start=17,
+  serialized_end=149,
 )
 
 
@@ -197,8 +159,8 @@ _SNAPSHOT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=224,
-  serialized_end=370,
+  serialized_start=152,
+  serialized_end=298,
 )
 
 
@@ -242,8 +204,8 @@ _POSE_TRANSLATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=455,
-  serialized_end=501,
+  serialized_start=383,
+  serialized_end=429,
 )
 
 _POSE_ROTATION = _descriptor.Descriptor(
@@ -293,8 +255,8 @@ _POSE_ROTATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=503,
-  serialized_end=557,
+  serialized_start=431,
+  serialized_end=485,
 )
 
 _POSE = _descriptor.Descriptor(
@@ -330,8 +292,8 @@ _POSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=373,
-  serialized_end=557,
+  serialized_start=301,
+  serialized_end=485,
 )
 
 
@@ -375,8 +337,8 @@ _COLORIMAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=559,
-  serialized_end=616,
+  serialized_start=487,
+  serialized_end=544,
 )
 
 
@@ -420,8 +382,8 @@ _DEPTHIMAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=618,
-  serialized_end=675,
+  serialized_start=546,
+  serialized_end=603,
 )
 
 
@@ -472,12 +434,10 @@ _FEELINGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=677,
-  serialized_end=758,
+  serialized_start=605,
+  serialized_end=686,
 )
 
-_ASSOCIATEDSNAPSHOT.fields_by_name['user'].message_type = _USER
-_ASSOCIATEDSNAPSHOT.fields_by_name['snapshot'].message_type = _SNAPSHOT
 _USER.fields_by_name['gender'].enum_type = _USER_GENDER
 _USER_GENDER.containing_type = _USER
 _SNAPSHOT.fields_by_name['pose'].message_type = _POSE
@@ -488,7 +448,6 @@ _POSE_TRANSLATION.containing_type = _POSE
 _POSE_ROTATION.containing_type = _POSE
 _POSE.fields_by_name['translation'].message_type = _POSE_TRANSLATION
 _POSE.fields_by_name['rotation'].message_type = _POSE_ROTATION
-DESCRIPTOR.message_types_by_name['AssociatedSnapshot'] = _ASSOCIATEDSNAPSHOT
 DESCRIPTOR.message_types_by_name['User'] = _USER
 DESCRIPTOR.message_types_by_name['Snapshot'] = _SNAPSHOT
 DESCRIPTOR.message_types_by_name['Pose'] = _POSE
@@ -496,13 +455,6 @@ DESCRIPTOR.message_types_by_name['ColorImage'] = _COLORIMAGE
 DESCRIPTOR.message_types_by_name['DepthImage'] = _DEPTHIMAGE
 DESCRIPTOR.message_types_by_name['Feelings'] = _FEELINGS
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
-
-AssociatedSnapshot = _reflection.GeneratedProtocolMessageType('AssociatedSnapshot', (_message.Message,), {
-  'DESCRIPTOR' : _ASSOCIATEDSNAPSHOT,
-  '__module__' : 'sample_pb2'
-  # @@protoc_insertion_point(class_scope:AssociatedSnapshot)
-  })
-_sym_db.RegisterMessage(AssociatedSnapshot)
 
 User = _reflection.GeneratedProtocolMessageType('User', (_message.Message,), {
   'DESCRIPTOR' : _USER,
