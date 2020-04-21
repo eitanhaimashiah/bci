@@ -6,9 +6,12 @@ class BinaryDriver:
     """Represents a driver to read sample files of binary format.
 
     Attributes:
+        format (str): Format of sample files this driver can handle.
         stream (IOBase): Stream representing the sample file.
 
     """
+
+    format = 'binary'
 
     def __init__(self, stream):
         self.stream = stream

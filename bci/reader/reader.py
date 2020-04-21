@@ -1,22 +1,11 @@
 import gzip
-from .drivers import BinaryDriver, ProtobufDriver
+import pathlib
+import importlib
+import inspect
+import sys
+
 from ..defaults import DEFAULT_FORMAT
 from ..protocol.utils import display_user, display_snapshot
-
-
-# TODO Replace it with generic driver
-drivers = {
-    'binary': BinaryDriver,
-    'protobuf': ProtobufDriver,
-}
-"""dict: Dictionary of possible drivers."""
-
-
-def find_driver(format, fp):
-    if format in drivers:
-        return drivers[format](fp)
-    else:
-        raise ValueError(f'unsupported sample format: {format}')
 
 
 class Reader:
@@ -32,7 +21,7 @@ class Reader:
         format (str): Format of the sample file.
 
     Raises:
-        ValueError: If `format` is not a supported sample format.
+        ValueError: If `format` is not supported.
         OSError: If a failure occurs while reading the sample file.
 
     """
@@ -66,6 +55,41 @@ class Reader:
         except Exception:
             self._fp.close()
             raise StopIteration  # If the last snapshot read failed, just terminate
+
+
+def find_driver(format, stream):
+    """Finds the appropriate driver according to `format`.
+
+    Args:
+        format (str): Format of the sample file.
+        stream (IOBase): Stream representing the sample file.
+
+    Returns:
+        The appropriate driver according to `format`.
+
+    Raises:
+        ValueError: If `format` is not supported.
+
+    """
+    # Import all modules of the drivers
+    modules = []
+    drivers_dir = pathlib.Path(__file__).absolute().parent / 'drivers'
+    sys.path.insert(0, str(drivers_dir.parent))
+    for path in drivers_dir.iterdir():
+        if path.suffix == '.py' and not path.name.startswith('_'):
+            package = '.'.join([p.name for p in drivers_dir.parents][1::-1])
+            modules.append(importlib.import_module(
+                f'.{drivers_dir.name}.{path.stem}',
+                package=package))
+
+    # Find the appropriate driver class for `format`
+    for module in modules:
+        for key, value in module.__dict__.items():
+            if key.endswith('Driver') and inspect.isclass(value)\
+                    and value.format == format:
+                return value(stream)
+
+    raise ValueError(f'unknown format: {format}')
 
 
 def read(path, format=None):

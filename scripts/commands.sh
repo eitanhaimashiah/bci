@@ -1,7 +1,7 @@
 # Test Reader
-#python -m bci.reader read '../sample.mind.gz'
+python -m bci.reader read '../sample.mind.gz'
 #python -m bci.reader read '../sample.mind' # error excepted
-python -m bci.reader read -f binary '../sample.mind'
+#python -m bci.reader -t read -f binary '../sample.mind'
 
 # Test Client
 #python -m cortex.client upload-sample '../sample.mind.gz'

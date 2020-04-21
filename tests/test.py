@@ -8,8 +8,8 @@ BINARY_SAMPLE_PATH = ROOT / 'sample.mind'
 
 if __name__ == '__main__':
     # Test Reader
-    # read(PROTO_SAMPLE_PATH)
-    read(BINARY_SAMPLE_PATH, format='binary')
+    read(PROTO_SAMPLE_PATH)
+    # read(BINARY_SAMPLE_PATH, format='binary')
 
     # Test Client
     # upload_sample(path=PROTO_SAMPLE_PATH)

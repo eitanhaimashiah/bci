@@ -6,9 +6,12 @@ class ProtobufDriver:
     """Represents a driver to read sample files of protobuf format.
 
     Attributes:
+        format (str): Format of sample files this driver can handle.
         stream (IOBase): Stream representing the sample file.
 
     """
+
+    format = 'protobuf'
 
     def __init__(self, stream):
         self.stream = stream
