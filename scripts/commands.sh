@@ -1,11 +1,17 @@
 # Test Reader
-python -m bci.reader read '../sample.mind.gz'
+#python -m bci.reader read '../sample.mind.gz'
 #python -m bci.reader read '../sample.mind' # error excepted
 #python -m bci.reader -t read -f binary '../sample.mind'
 
 # Test Client
-#python -m cortex.client upload-sample '../sample.mind.gz'
-#python -m cortex.client upload-sample -f binary '../sample.mind.gz'
+python -m bci.client upload-sample '../sample.mind.gz'
+#python -m bci.client upload-sample -f binary '../sample.mind'
+
+# Test Server
+#python -m bci.server run-server 'rabbitmq://127.0.0.1:5672/'
+
+# Test Server on multiple clients
+# TODO Complete
 
 #python -m bci.server run-server -p 5000 'rabbitmq://127.0.0.1:6789/'
 #python -m bci.parsers run-parser 'pose' 'rabbitmq://127.0.0.1:6789/'

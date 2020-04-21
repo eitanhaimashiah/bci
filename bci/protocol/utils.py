@@ -1,8 +1,12 @@
 import struct
 import io
 import datetime as dt
-from . import sample_pb2 as pb
 
+from . import sample_pb2 as pb
+from ..utils.struct import read_struct_by_format
+
+
+# Displaying
 
 def display_user(user):
     """Displays `user` in a human-readable form.
@@ -44,64 +48,89 @@ def display_snapshot(snapshot):
           f'depth image.')
 
 
-# def deserialize_user(data):
-#     """Deserializes `data` to a User message object.
-#
-#     Args:
-#         data (bytes): Binary data composed of a sequence of a user
-#             message size (uint32) and a user message of that size.
-#
-#     Returns:
-#         pb.User: User message object deserialized from `data`.
-#
-#     """
-#     stream = io.BytesIO(data)
-#     user_size, = struct.unpack('<I', stream.read(4))
-#     user = bubbles_proto.User()
-#     user.ParseFromString(stream.read(user_size))
-#
-#     snapshot_size, = struct.unpack('<I', stream.read(4))
-#     snapshot = bubbles_proto.Snapshot()
-#     snapshot.ParseFromString(stream.read(snapshot_size))
-#
-#     return user, snapshot
-#
-#
-# def deserialize_message(data):
-#     """Deserializes `data`.
-#
-#     Args:
-#         data (bytes): Binary data composed of a sequence of a message
-#             size (uint32) and a message of that size.
-#
-#     Returns:
-#         (pb.User, pb.Snapshot): User and snapshot objects
-#         deserialized from `data`.
-#
-#     """
-#     stream = io.BytesIO(data)
-#     user_size, = struct.unpack('<I', stream.read(4))
-#     user = bubbles_proto.User()
-#     user.ParseFromString(stream.read(user_size))
-#
-#     snapshot_size, = struct.unpack('<I', stream.read(4))
-#     snapshot = bubbles_proto.Snapshot()
-#     snapshot.ParseFromString(stream.read(snapshot_size))
-#
-#     return user, snapshot
-#
-#
-# def serialize_message(user, snapshot):
-#     '''Serialize user and snapshot objects to message.
-#
-#     :param user: user object.
-#     :param snapshot: snapshot object.
-#     :returns: message encodes the above objects.
-#     :rtype: bytes
-#     '''
-#     user_data = user.SerializeToString()
-#     user_size = struct.pack('<I', len(user_data))
-#
-#     snapshot_data = snapshot.SerializeToString()
-#     snapshot_size = struct.pack('<I', len(snapshot_data))
-#     return user_size + user_data + snapshot_size + snapshot_data
+# Reading
+
+def read_user(stream):
+    """Read a User object from `stream`.
+
+    Args:
+        stream (IOBase): Stream we are reading from.
+
+    Returns:
+        pb.User: The User object read from `stream`.
+
+    """
+    data = read_message(stream)
+    user = pb.User()
+    user.ParseFromString(data)
+    return user
+
+
+def read_snapshot(stream):
+    """Read a Snapshot object from `stream`.
+
+    Args:
+        stream (IOBase): Stream we are reading from.
+
+    Returns:
+        pb.Snapshot: The Snapshot object read from `stream`.
+
+    """
+    data = read_message(stream)
+    snapshot = pb.Snapshot()
+    snapshot.ParseFromString(data)
+    return snapshot
+
+
+def read_message(stream):
+    """Reads binary data composed of a sequence of a message size
+    (uint32) and a message of that size.
+
+    Args:
+        stream (IOBase): Stream we are reading from.
+
+    Returns:
+        bytes: The message as a bytes object.
+
+    """
+    size, = read_struct_by_format(stream, '<I')
+    message = stream.read(size)
+    return message
+
+
+# Parsing and Serialization
+
+def serialize_to_message(user, snapshot):
+    """Serializes `user` and `snapshot` to a message.
+
+    Args:
+        user (pb.User): User object.
+        snapshot (pb.Snapshot): Snapshot object.
+
+    Returns:
+        bytes: Message serializing `user` and `snapshot`.
+
+    """
+    user_data = user.SerializeToString()
+    user_size = struct.pack('<I', len(user_data))
+    snapshot_data = snapshot.SerializeToString()
+    snapshot_size = struct.pack('<I', len(snapshot_data))
+    return user_size + user_data + snapshot_size + snapshot_data
+
+
+def parse_from_message(data):
+    """Parses `data` to a tuple composed of User and Snapshot objects.
+
+    Args:
+        data (bytes): Binary data composed of a sequence of a message
+            size (uint32) and a message of that size.
+
+    Returns:
+        (pb.User, pb.Snapshot): User and Snapshot objects parsed
+        from `data`.
+
+    """
+    stream = io.BytesIO(data)
+    user = read_user(stream)
+    snapshot = read_snapshot(stream)
+    return user, snapshot

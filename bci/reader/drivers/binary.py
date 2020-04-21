@@ -1,5 +1,5 @@
 from ...protocol import sample_pb2 as pb
-from ...utils.struct import read_by_format
+from ...utils.struct import read_struct_by_format
 
 
 class BinaryDriver:
@@ -71,4 +71,4 @@ class BinaryDriver:
                            feelings=feelings)
 
     def _read_field(self, format):
-        return read_by_format(self.stream, format)
+        return read_struct_by_format(self.stream, format)

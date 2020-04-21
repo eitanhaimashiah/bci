@@ -1,7 +1,8 @@
 import requests
 from ..reader import Reader
 from ..protocol.sample_pb2 import Snapshot
-from ..defaults import DEFAULT_SERVER_IP, DEFAULT_SERVER_PORT, DEFAULT_FORMAT
+from ..protocol.utils import serialize_to_message
+from ..defaults import DEFAULT_SERVER_IP, DEFAULT_SERVER_PORT
 
 
 def upload_sample(path, host=None, port=None, format=None):
@@ -17,28 +18,23 @@ def upload_sample(path, host=None, port=None, format=None):
         format (:obj:`str`, optional): Format of the sample file.
             Default to `DEFAULT_FORMAT`
 
-    Returns:
-        bool: True if successful, False otherwise.
-
     Raises:
-        TODO Complete
+        ValueError: If `format` is not supported.
+        OSError: If a failure occurs while reading the sample file.
+        requests.exceptions.RequestException: If there was an
+            ambiguous exception that occurred while communicating with
+            the server.
 
     """
-    # TODO Check this function again
     host = host or DEFAULT_SERVER_IP
     port = port or DEFAULT_SERVER_PORT
-    format = format or DEFAULT_FORMAT
     url = f'http://{host}:{port}'
     reader = Reader(path, format)
     config = requests.get(f'{url}/config').json()['fields']
     for snapshot in reader:
         fields = {field: getattr(snapshot, field) for field in config}
         snapshot = Snapshot(datetime=snapshot.datetime, **fields)
-        # associated_snapshot = AssociatedSnapshot(user=reader.user, snapshot=snapshot)
-        associated_snapshot = None
-        requests.post(f'{url}/snapshot', associated_snapshot.SerializeToString())
+        requests.post(f'{url}/snapshot',
+                      serialize_to_message(reader.user, snapshot))
         print('sent')
     print('done')
-    return True
-
-

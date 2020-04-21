@@ -1,6 +1,7 @@
 from flask import Flask, request
-from ..protocol.sample_pb2 import AssociatedSnapshot
+
 from ..defaults import DEFAULT_SERVER_IP, DEFAULT_SERVER_PORT
+from ..protocol.utils import parse_from_message
 
 
 def _flatten(l):
@@ -38,13 +39,13 @@ def run_server(publish, host=None, port=None):
 
     @app.route('/config', methods=['GET'])
     def get_config():
+        print('in config')
         return {'fields': fields}
 
     @app.route('/snapshot', methods=['POST'])
     def post_snapshot():
-        user_snapshot = AssociatedSnapshot()
-        user_snapshot.ParseFromString(request.data)
-        publish(user_snapshot)
+        user, snapshot = parse_from_message(request.data)
+        publish(snapshot)
         return {}
 
     app.run(host=host, port=port, threaded=True, debug=True)

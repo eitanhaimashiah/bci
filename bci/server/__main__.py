@@ -11,8 +11,10 @@ from ..utils.cli import main, log
 @click.argument('mq')
 def cli_run_server(host, port, mq):
     # TODO Run a message queue, and then pass the approripate publishing function
-    run_server(host=host, port=port, publish=print_message)
+    # run_server(host=host, port=port, publish=print_message)
 
+    from bci.protocol.utils import display_snapshot
+    run_server(host=host, port=port, publish=display_snapshot)
 
 def print_message(message):
     print(message)

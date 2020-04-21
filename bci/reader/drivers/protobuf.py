@@ -1,5 +1,4 @@
-from ...protocol import sample_pb2 as pb
-from ...utils.struct import read_by_format
+from ...protocol.utils import read_user, read_snapshot
 
 
 class ProtobufDriver:
@@ -17,18 +16,7 @@ class ProtobufDriver:
         self.stream = stream
 
     def read_user(self):
-        data = self._read_message()
-        user = pb.User()
-        user.ParseFromString(data)
-        return user
+        return read_user(self.stream)
 
     def read_snapshot(self):
-        data = self._read_message()
-        snapshot = pb.Snapshot()
-        snapshot.ParseFromString(data)
-        return snapshot
-
-    def _read_message(self):
-        size, = read_by_format(self.stream, '<I')
-        message = self.stream.read(size)
-        return message
+        return read_snapshot(self.stream)
