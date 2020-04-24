@@ -49,16 +49,13 @@ def cli_get_snapshot(host, port, user_id, snapshot_id):
     pass
 
 
-# TODO If `save` specified, receives a path, and saves the result's
-#  data to that pathAccept the `-s/--save` flag properly
 @main.command('get-result')
 @click.option('--host', '-h')
 @click.option('--port', '-p', type=int)
-@click.option('--save', '-s', is_flag=True, default=False)
+@click.option('--save', '-s', type=click.Path(), default=None)
 @click.argument('user_id', type=int)
 @click.argument('snapshot_id', type=int)
 @click.argument('topic')
-# @click.argument('path')
 def cli_get_result(host, port, save, user_id, snapshot_id, topic):
     host = host or DEFAULT_API_SERVER_IP
     port = port or DEFAULT_API_SERVER_PORT
