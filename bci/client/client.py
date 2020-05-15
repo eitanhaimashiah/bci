@@ -1,8 +1,9 @@
 import requests
 from ..reader import Reader
 from ..protocol.sample_pb2 import Snapshot
-from ..protocol.utils import serialize_to_message
-from ..defaults import DEFAULT_SERVER_IP, DEFAULT_SERVER_PORT
+from ..protocol.utils.parse_serialize import serialize_to_message
+from ..protocol.utils.display import get_datetime_str
+from ..defaults import DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT
 
 
 def upload_sample(path, host=None, port=None, format=None):
@@ -12,7 +13,7 @@ def upload_sample(path, host=None, port=None, format=None):
     Args:
         path (str): Path of the sample file.
         host (:obj:`str`, optional): Server's IP address. Default to
-            `DEFAULT_SERVER_IP`.
+            `DEFAULT_SERVER_HOST`.
         port (:obj:`int`, optional): Server's port. Default to
             `DEFAULT_SERVER_PORT`.
         format (:obj:`str`, optional): Format of the sample file.
@@ -26,7 +27,7 @@ def upload_sample(path, host=None, port=None, format=None):
             the server.
 
     """
-    host = host or DEFAULT_SERVER_IP
+    host = host or DEFAULT_SERVER_HOST
     port = port or DEFAULT_SERVER_PORT
     url = f'http://{host}:{port}'
     reader = Reader(path, format)
@@ -36,5 +37,5 @@ def upload_sample(path, host=None, port=None, format=None):
         snapshot = Snapshot(datetime=snapshot.datetime, **fields)
         requests.post(f'{url}/snapshot',
                       serialize_to_message(reader.user, snapshot))
-        print('sent')
-    print('done')
+        print(f'Sent the snapshot from {get_datetime_str(snapshot)}')
+    print('Done')

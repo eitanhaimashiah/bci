@@ -1,10 +1,10 @@
 class Saver:
-    """Encapsulates a database saver.
-
-    Args:
-        database_url (str): URL of the running database.
+    """Represents a database saver.
 
     Attributes:
+        database_url (str): URL of the running database.
+
+    Args:
         database_url (str): URL of the running database.
 
     """

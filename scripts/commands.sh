@@ -4,11 +4,10 @@
 #python -m bci.reader -t read -f binary '../sample.mind'
 
 # Test Client
-python -m bci.client upload-sample '../sample.mind.gz'
-#python -m bci.client upload-sample -f binary '../sample.mind'
+#python -m bci.client uploapython -m bci.client upload-sample '../sample.mind.gz'd-sample -f binary '../sample.mind'
 
 # Test Server
-#python -m bci.server run-server 'rabbitmq://127.0.0.1:5672/'
+python -m bci.server run-server 'rabbitmq://127.0.0.1:5672/'
 
 # Test Server on multiple clients
 # TODO Complete

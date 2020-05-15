@@ -1,6 +1,4 @@
 import json
-from .context import Context
-from ..protocol.sample_pb2 import Snapshot
 
 
 def parse_feelings(context, snapshot):

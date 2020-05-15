@@ -1,4 +1,4 @@
-from ...protocol.utils import read_user, read_snapshot
+from ...protocol.utils.read import read_user, read_snapshot
 
 
 class ProtobufDriver:

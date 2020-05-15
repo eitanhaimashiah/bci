@@ -29,3 +29,4 @@ grpcio==1.26.0
 grpcio-tools==1.26.0
 pika==1.1.0
 colorama==0.4.3
+furl==2.1.0

@@ -2,8 +2,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib
 matplotlib.use('agg')
-from .context import Context
-from ..protocol.sample_pb2 import Snapshot
 
 
 def parse_depth_image(context, snapshot):
