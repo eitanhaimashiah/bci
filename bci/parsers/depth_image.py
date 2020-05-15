@@ -1,3 +1,4 @@
+import json
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib
@@ -15,7 +16,15 @@ def parse_depth_image(context, snapshot):
 
     """
     # TODO Check this function again
-    path = context.path(f'depth_image.jpg')
+    # Save metadata
+    context.save('depth_image.json', json.dumps(dict(
+        width=snapshot.depth_image.width,
+        height=snapshot.depth_image.height,
+        data_path=''
+    )))
+
+    # Save data
+    path = context.path('depth_image_data.jpg')
     size = snapshot.depth_image.height, snapshot.depth_image.width
     plt.imshow(np.reshape(snapshot.depth_image.data, size), cmap='nipy_spectral')
     plt.colorbar()

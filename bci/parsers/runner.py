@@ -32,13 +32,14 @@ def load_parsers():
     return parsers
 
 
-def run_parser(parsers, topic, data):
+def run_parser(topic, context, data):
     """Runs the parser named `name` on `data`.
 
     Args:
-        parsers (dict): The dictionary mapping a parser's field to its
-            function or class. Returned by the `load_parsers` function.
+        # parsers (dict): The dictionary mapping a parser's field to its
+        #     function or class. Returned by the `load_parsers` function.
         topic (str): Parser name.
+        context (Context): Context in the application.
         data (bytes): Raw data, as consumed from the message queue.
             The data contains one snapshot alongside the user
             information.
@@ -48,4 +49,5 @@ def run_parser(parsers, topic, data):
 
     """
     # TODO Check this function again
-    parsers[topic](data)
+    global parsers
+    parsers[topic](context, data)

@@ -4,7 +4,7 @@ import google.protobuf.json_format as pbj
 
 from .display import get_gender_str
 from .. import sample_pb2 as pb
-
+from ...parsers import load_parsers
 
 def json_user(user):
     """Serializes `user` to a JSON formatted string.
@@ -46,3 +46,22 @@ def json_snapshot(snapshot, user_id, blobs_path):
     snapshot_dict['color_image']['data'] = str(blobs_path / 'color_image')
     snapshot_dict['depth_image']['data'] = str(blobs_path / 'depth_image.npy')
     return json.dumps(snapshot_dict)
+
+
+def json_snapshot_metadata(snapshot):
+    """
+    TODO Complete doc (if necessary)
+
+    Args:
+        snapshot:
+
+    Returns:
+
+    """
+    metadata = {
+        'snapshot_id': snapshot.datetime,
+        'datetime': snapshot.datetime,
+    }
+    parsers = load_parsers()
+    metadata['results'] = list(parsers.keys())
+    return json.dumps(metadata)
