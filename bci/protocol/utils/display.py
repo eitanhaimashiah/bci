@@ -12,9 +12,11 @@ def display_user(user):
     """
     gender = get_gender_str(user)
     birthday = dt.datetime.fromtimestamp(user.birthday)
+    # TODO Decomment following code. For some reason, datetime format doesn't work on Windows
+    # print(f'User {user.user_id}: {user.username}, '
+    #       f'born {birthday:%B %-d, %Y} ({gender})')
     print(f'User {user.user_id}: {user.username}, '
-          f'born {birthday:%B %-d, %Y} ({gender})')
-
+          f'born {birthday} ({gender})')
 
 def display_snapshot(snapshot):
     """Displays `snapshot` in a human-readable form.
@@ -74,7 +76,9 @@ def get_datetime_str(snapshot, purpose='display'):
     timestamp = snapshot.datetime / 1000  # convert timestamp from milliseconds to seconds
     datetime = dt.datetime.fromtimestamp(timestamp)
     if purpose == 'display':
-        return datetime.strftime('%B %-d, %Y at %H:%M:%S.%f')[:-3]
+        # TODO Decomment following code. For some reason, datetime format doesn't work on Windows
+        # return datetime.strftime('%B %-d, %Y at %H:%M:%S.%f')[:-3]
+        return datetime
     elif purpose == 'save':
         return datetime.strftime('%Y-%m-%d_%H-%M-%S-%f')
     else:
