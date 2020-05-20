@@ -8,8 +8,8 @@ def serialize_to_message(user, snapshot):
     """Serializes `user` and `snapshot` to a message.
 
     Args:
-        user (pb.User): User object.
-        snapshot (pb.Snapshot): Snapshot object.
+        user (bci.protocol.sample.User): User object.
+        snapshot (bci.protocol.sample.Snapshot): Snapshot object.
 
     Returns:
         bytes: Message serializing `user` and `snapshot`.
@@ -30,8 +30,9 @@ def parse_from_message(data):
             size (uint32) and a message of that size.
 
     Returns:
-        (pb.User, pb.Snapshot): User and Snapshot objects parsed
-        from `data`.
+        tuple: The tuple containing:
+            user (bci.protocol.sample.User): User object parsed from `data`.
+            snapshot (bci.protocol.sample.Snapshot): Snapshot object parsed from `data`.
 
     """
     stream = io.BytesIO(data)

@@ -8,8 +8,8 @@ def parse_color_image(context, snapshot):
     dedicated topic.
 
     Args:
-        context (Context): Context in the application.
-        snapshot (Snapshot): Snapshot uploaded to the server.
+        context (bci.protocol.utils.Context): Context in the application.
+        snapshot (bci.protocol.sample.Snapshot): Snapshot uploaded to the server.
 
     """
     # TODO Check this function again

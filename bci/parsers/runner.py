@@ -11,7 +11,7 @@ def load_parsers():
     mapping a parser's field to its function or class.
 
     Returns:
-        dict: The dictionary mapping a parser's field to its
+        dict: A dictionary mapping a parser's field to its
         function or class.
 
     """

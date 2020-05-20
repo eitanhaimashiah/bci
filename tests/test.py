@@ -8,7 +8,6 @@ from bci.parsers import load_parsers, run_parser
 from bci.publisher.drivers import find_driver
 from bci.protocol.utils.context import Context
 from bci.protocol.utils.json_format import json_user, json_snapshot, json_snapshot_metadata
-from bci.protocol import sample_pb2 as pb
 
 ROOT = pathlib.Path(__file__).absolute().parent.parent
 PROTO_SAMPLE_PATH = ROOT / 'sample.mind.gz'
@@ -18,7 +17,7 @@ DATA_DIR = ROOT / 'data'
 
 if __name__ == '__main__':
     # Test Reader
-    # read(PROTO_SAMPLE_PATH)
+    read(PROTO_SAMPLE_PATH)
     # read(BINARY_SAMPLE_PATH, format='binary')
 
     # Test Context and `save_blobs`
@@ -55,16 +54,16 @@ if __name__ == '__main__':
     # print(json_snapshot(snapshot, user.user_id, 'root'))
 
     # Generate `data` directory for implementing API and GUI
-    context = Context(DATA_DIR)
-    reader = Reader(PROTO_SAMPLE_PATH)
-    user = reader.user
-    context.set(user=user)
-    context.save('metadata.json', json_user(user))
-    display_user(user)
-    for snapshot in reader:
-        context.set(snapshot=snapshot)
-        context.save('metadata.json', json_snapshot_metadata(snapshot))
-        parsers = load_parsers()
-        for topic in parsers.keys():
-            run_parser(topic, context, snapshot)
-        display_snapshot(snapshot)
+    # context = Context(DATA_DIR)
+    # reader = Reader(PROTO_SAMPLE_PATH)
+    # user = reader.user
+    # context.set(user=user)
+    # context.save('metadata.json', json_user(user))
+    # display_user(user)
+    # for snapshot in reader:
+    #     context.set(snapshot=snapshot)
+    #     context.save('metadata.json', json_snapshot_metadata(snapshot))
+    #     parsers = load_parsers()
+    #     for topic in parsers.keys():
+    #         run_parser(topic, context, snapshot)
+    #     display_snapshot(snapshot)

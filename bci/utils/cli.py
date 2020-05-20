@@ -11,9 +11,9 @@ class Log:
     `quiet` and `traceback` flags.
 
     Attributes:
-        quiet (bool): Flag indicating whether to quiet errors.
-        traceback (bool): Flag indicating whether to print the
-            traceback in case of an error.
+        quiet (bool): If true, quiets errors.
+        traceback (bool): If true, prints the traceback in case of
+            an error.
 
     """
 

@@ -1,13 +1,13 @@
 import datetime as dt
 
-from .. import sample_pb2 as pb
+from .. import sample
 
 
 def display_user(user):
     """Displays `user` in a human-readable form.
 
     Args:
-        user (pb.User): User object.
+        user (bci.protocol.sample.User): User object.
 
     """
     gender = get_gender_str(user)
@@ -20,7 +20,7 @@ def display_snapshot(snapshot):
     """Displays `snapshot` in a human-readable form.
 
     Args:
-        snapshot (pb.Snapshot): Snapshot object.
+        snapshot (bci.protocol.sample.Snapshot): Snapshot object.
 
     """
     datetime_str = get_datetime_str(snapshot)
@@ -41,15 +41,15 @@ def get_gender_str(user):
     given user.
 
     Args:
-        user (pb.User): User object.
+        user (bci.protocol.sample.User): User object.
 
     Returns:
         str: The required string.
 
     """
-    if user.gender == pb.User.MALE:
+    if user.gender == sample.User.MALE:
         return 'male'
-    elif user.gender == pb.User.FEMALE:
+    elif user.gender == sample.User.FEMALE:
         return 'female'
     else:
         return 'other'
@@ -60,7 +60,7 @@ def get_datetime_str(snapshot, purpose='display'):
     given snapshot.
 
     Args:
-        snapshot (pb.Snapshot): Snapshot object.
+        snapshot (bci.protocol.sample.Snapshot): Snapshot object.
         purpose (str): For what purpose the result will be used.
             Default to 'display'.
 

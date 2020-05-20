@@ -1,4 +1,4 @@
-from .. import sample_pb2 as pb
+from .. import sample
 from ...utils.struct import read_struct_by_format
 
 
@@ -9,11 +9,11 @@ def read_user(stream):
         stream (IOBase): Stream we are reading from.
 
     Returns:
-        pb.User: The User object read from `stream`.
+        bci.protocol.sample.User: The User object read from `stream`.
 
     """
     data = read_message(stream)
-    user = pb.User()
+    user = sample.User()
     user.ParseFromString(data)
     return user
 
@@ -25,11 +25,11 @@ def read_snapshot(stream):
         stream (IOBase): Stream we are reading from.
 
     Returns:
-        pb.Snapshot: The Snapshot object read from `stream`.
+        bci.protocol.sample.Snapshot: The Snapshot object read from `stream`.
 
     """
     data = read_message(stream)
-    snapshot = pb.Snapshot()
+    snapshot = sample.Snapshot()
     snapshot.ParseFromString(data)
     return snapshot
 

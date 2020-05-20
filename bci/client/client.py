@@ -1,6 +1,6 @@
 import requests
 from ..reader import Reader
-from ..protocol.sample_pb2 import Snapshot
+from ..protocol.sample import Snapshot
 from ..protocol.utils.parse_serialize import serialize_to_message
 from ..protocol.utils.display import get_datetime_str
 from ..defaults import DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT

@@ -1,4 +1,4 @@
-from ...protocol import sample_pb2 as pb
+from ...protocol import sample
 from ...utils.struct import read_struct_by_format
 
 
@@ -21,9 +21,9 @@ class BinaryDriver:
         username_size, = self._read_field('<I')
         username = self.stream.read(username_size).decode()
         birthday, = self._read_field('<I')
-        genders = {'m': pb.User.MALE, 'f': pb.User.FEMALE, 'o': pb.User.OTHER}
+        genders = {'m': sample.User.MALE, 'f': sample.User.FEMALE, 'o': sample.User.OTHER}
         gender = genders[self.stream.read(1).decode()]
-        return pb.User(user_id=user_id,
+        return sample.User(user_id=user_id,
                        username=username,
                        birthday=birthday,
                        gender=gender)
@@ -31,10 +31,10 @@ class BinaryDriver:
     def read_snapshot(self):
         datetime, = self._read_field('<Q')
         tx, ty, tz = self._read_field('<3d')
-        translation = pb.Pose.Translation(x=tx, y=ty, z=tz)
+        translation = sample.Pose.Translation(x=tx, y=ty, z=tz)
         rx, ry, rz, rw = self._read_field('<4d')
-        rotation = pb.Pose.Rotation(x=rx, y=ry, z=rz, w=rw)
-        pose = pb.Pose(translation=translation,
+        rotation = sample.Pose.Rotation(x=rx, y=ry, z=rz, w=rw)
+        pose = sample.Pose(translation=translation,
                        rotation=rotation)
 
         # Read the color image.
@@ -45,7 +45,7 @@ class BinaryDriver:
             b, g, r = bgr_pixel
             rgb_pixel = r, g, b
             color_image_data.extend(rgb_pixel)
-        color_image = pb.ColorImage(width=color_image_width,
+        color_image = sample.ColorImage(width=color_image_width,
                                     height=color_image_height,
                                     data=bytes(color_image_data))
 
@@ -53,18 +53,18 @@ class BinaryDriver:
         depth_image_height, depth_image_width = self._read_field('<II')
         depth_image_size = depth_image_height * depth_image_width
         depth_image_data = self._read_field(f'<{depth_image_size}f')
-        depth_image = pb.DepthImage(width=depth_image_width,
+        depth_image = sample.DepthImage(width=depth_image_width,
                                     height=depth_image_height,
                                     data=depth_image_data)
 
         # Read the feelings.
         hunger, thirst, exhaustion, happiness = self._read_field('<4f')
-        feelings = pb.Feelings(hunger=hunger,
+        feelings = sample.Feelings(hunger=hunger,
                                thirst=thirst,
                                exhaustion=exhaustion,
                                happiness=happiness)
 
-        return pb.Snapshot(datetime=datetime,
+        return sample.Snapshot(datetime=datetime,
                            pose=pose,
                            color_image=color_image,
                            depth_image=depth_image,
