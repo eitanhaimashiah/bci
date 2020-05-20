@@ -30,7 +30,7 @@ def parse_from_message(data):
             size (uint32) and a message of that size.
 
     Returns:
-        tuple: The tuple containing:
+        tuple: Tuple containing:
             user (bci.protocol.sample.User): User object parsed from `data`.
             snapshot (bci.protocol.sample.Snapshot): Snapshot object parsed from `data`.
 

@@ -1,6 +1,7 @@
 import requests
+
 from ..reader import Reader
-from ..protocol.sample import Snapshot
+from ..protocol import sample_pb2 as sample
 from ..protocol.utils.parse_serialize import serialize_to_message
 from ..protocol.utils.display import get_datetime_str
 from ..defaults import DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT
@@ -34,7 +35,7 @@ def upload_sample(path, host=None, port=None, format=None):
     config = requests.get(f'{url}/config').json()['fields']
     for snapshot in reader:
         fields = {field: getattr(snapshot, field) for field in config}
-        snapshot = Snapshot(datetime=snapshot.datetime, **fields)
+        snapshot = sample.Snapshot(datetime=snapshot.datetime, **fields)
         requests.post(f'{url}/snapshot',
                       serialize_to_message(reader.user, snapshot))
         print(f'Sent the snapshot from {get_datetime_str(snapshot)}')

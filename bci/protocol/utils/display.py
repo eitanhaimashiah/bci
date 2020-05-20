@@ -1,6 +1,6 @@
 import datetime as dt
 
-from .. import sample
+from .. import sample_pb2 as sample
 
 
 def display_user(user):

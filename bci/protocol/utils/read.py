@@ -1,4 +1,4 @@
-from .. import sample
+from .. import sample_pb2 as sample
 from ...utils.struct import read_struct_by_format
 
 
