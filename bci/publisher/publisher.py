@@ -1,55 +1,25 @@
-import pathlib
-
+from ..defaults import DEFAULT_URL
 from .drivers import find_driver
-from ..protocol.utils.context import Context
-from ..protocol.utils.json_format import json_user, json_snapshot
 
 
 class Publisher:
-    """Represents a message queue handler.
+    """Represents a message queue publisher.
 
     Attributes:
         url (str): URL of the message queue's server.
-        root (str): Root directory of the filesystem shared among all
-            containers.
 
     Args:
-        url (str): URL of the message queue's server.
-        root (str): Root directory of the filesystem shared among all
-            containers.
+        url (:obj:`str`, optional): URL of the message queue's server.
+            Default to `DEFAULT_URL`.
 
     """
 
-    def __init__(self, url, root):
-        self.url = url
-        self.root = pathlib.Path(root)
-        self.driver = find_driver(self.url)
-        self.context = Context(self.root)
+    def __init__(self, url=None):
+        self.url = url or DEFAULT_URL
+        self._driver = find_driver(self.url)
 
-    def __repr__(self):
-        return f'{self.__class__.__name__}(' \
-               f'url={self.url!r}, ' \
-               f'root={self.root!r})'
+    def publish(self, message, exchange, routing_key):
+        self._driver.publish(message, exchange, routing_key)
 
-    def publish(self, message):
-        """Publishes `message` to the message queue.
-
-        Args:
-            message: Message to be published.
-
-        Raises:
-            TODO Complete
-
-        """
-        user, snapshot = message
-
-        # TODO Continue from here
-        self.driver.share_publish(json_user(user),
-                                  routing_key='user',
-                                  exchange='results')
-        self.context.save_blobs(user, snapshot)
-        self.driver.task_publish(json_snapshot(snapshot, user.user_id, self.root),
-                                 segment='raw_data')
-
-
-
+    def subscribe(self, exchange, routing_key, queue, callback):
+        self._driver.subscribe(exchange, routing_key, queue, callback)

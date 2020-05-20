@@ -1,8 +1,12 @@
 import flask
+import json
 
-from ..defaults import DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT
+from ..defaults import DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT, BLOBS_DIR
+from ..protocol.utils import Context
+from ..protocol.utils.display import display_snapshot
 from ..protocol.utils.parse_serialize import parse_from_message
-from ..parsers import load_parsers, run_parser
+from ..protocol.utils.to_dict import user_to_dict, snapshot_to_dict
+from ..parsers import load_parsers
 
 
 def run_server(publish, host=None, port=None):
@@ -35,7 +39,13 @@ def run_server(publish, host=None, port=None):
     @app.route('/snapshot', methods=['POST'])
     def post_snapshot():
         try:
-            publish(parse_from_message(flask.request.data))
+            user, snapshot = parse_from_message(flask.request.data)
+            display_snapshot(snapshot)
+            Context(BLOBS_DIR).save_blobs(user, snapshot)
+            publish(json.dumps({
+                'user': user_to_dict(user),
+                'snapshot': snapshot_to_dict(snapshot)
+            }))
             return flask.jsonify({'error': None})
         except Exception as error:
             return flask.jsonify({'error': str(error)}), 500

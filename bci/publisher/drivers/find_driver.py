@@ -24,12 +24,12 @@ def find_driver(url):
     if not modules:
         modules = load_modules(__file__)
 
-    # Find the publisher corresponding to `scheme`
+    # Find the driver corresponding to `scheme`
     scheme = furl.furl(url).scheme
     for module in modules:
         for key, value in module.__dict__.items():
-            if key.endswith('Publisher') and inspect.isclass(value)\
+            if key.endswith('Driver') and inspect.isclass(value)\
                     and value.scheme == scheme:
                 return value(url)
 
-    raise ValueError(f'unknown scheme: {format}')
+    raise ValueError(f'unknown scheme: {scheme}')

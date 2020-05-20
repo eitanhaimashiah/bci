@@ -13,8 +13,8 @@ class Context:
         if user:
             self.user_id = str(user.user_id)
         if snapshot:
-            # self.snapshot_id = get_datetime_str(snapshot, purpose='save')
-            self.snapshot_id = str(snapshot.datetime)
+            self.snapshot_id = get_datetime_str(snapshot, purpose='save')
+            # self.snapshot_id = str(snapshot.datetime)
 
     def path(self, filename):
         assert self.user_id
