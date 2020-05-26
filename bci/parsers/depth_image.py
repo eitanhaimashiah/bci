@@ -1,4 +1,4 @@
-import json
+import pathlib
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib
@@ -6,31 +6,28 @@ matplotlib.use('agg')
 
 
 def parse_depth_image(context, snapshot):
-    """Collects the depth image of what the user was seeing at a
-    given timestamp from `snapshot`, and publishes the result to a
-    dedicated topic.
+    """Collects the depth image of what the user was seeing at a given
+    timestamp from `snapshot`. The image itself is stored to disk.
 
     Args:
-        context (Context): Context in the application.
-        snapshot (Snapshot): Snapshot uploaded to the server.
+        context (bci.protocol.utils.Context): Context in the application.
+        snapshot (dict): Snapshot as consumed from the message queue
+            and converted to dictionary representation.
+
+    Returns:
+        dict: A dictionary containing `snapshot`'s depth image metadata.
 
     """
-    # TODO Check this function again
-    # Save metadata
-    context.save('depth_image.json', json.dumps(dict(
-        width=snapshot.depth_image.width,
-        height=snapshot.depth_image.height,
-        data_path=''
-    )))
-
-    # Save data
-    path = context.path('depth_image_data.jpg')
-    size = snapshot.depth_image.height, snapshot.depth_image.width
-    plt.imshow(np.reshape(snapshot.depth_image.data, size), cmap='nipy_spectral')
+    depth_image = snapshot['depth_image']
+    size = depth_image['height'], depth_image['width']
+    data = np.load(depth_image['data']).reshape(size)
+    result_path = context.path('depth_image.jpg', is_raw=False)
+    plt.imshow(data, cmap='hot', interpolation='nearest')
     plt.colorbar()
-    # plt.axis('off')
-    plt.savefig(path)
+    plt.savefig(result_path)
     plt.close()
+    depth_image['data'] = str(result_path)  # TODO Consider
+    return depth_image
 
 
 parse_depth_image.field = 'depth_image'

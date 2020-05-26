@@ -9,15 +9,14 @@ from ..publisher import Publisher
 @main.command('run-server')
 @click.option('--host', '-h')
 @click.option('--port', '-p', type=int)
-@click.argument('url', required=False)
-def cli_run_server(host, port, url):
-    publisher = Publisher(url)
+@click.argument('mq_url', required=False)
+def cli_run_server(host, port, mq_url):
+    publisher = Publisher(mq_url)
 
     def publish(message):
-        # TODO Make sure the exchange and routing_key are correct
         publisher.publish(message,
                           exchange='snapshots',
-                          routing_key='snapshot.data')
+                          routing_key='snapshot.raw')
 
     run_server(host=host, port=port, publish=publish)
 

@@ -11,7 +11,7 @@ def load_modules(loader_file):
             that are in the same folder with it.
 
     Returns:
-        dict: Dictionary mapping a module name to the corresponding
+        dict: A dictionary mapping a module name to the corresponding
         module object.
 
     """

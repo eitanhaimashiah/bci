@@ -22,3 +22,24 @@ class Saver:
         """
         # TODO Complete this function
         pass
+
+
+# def snapshot_to_metadata_dict(snapshot):
+#     """Converts `snapshot` to a dictionary .
+#     TODO Complete doc (if necessary)
+#
+#     Args:
+#         snapshot:
+#
+#     Returns:
+#
+#     """
+#     return {
+#         'snapshot_id': snapshot.datetime,
+#         'datetime': snapshot.datetime,
+#         'results': get_fields()
+#     }
+
+# context (Context): Context in the application.
+#     context.set(user=data['user'])
+#     context.save('pose.json', json.dumps(data['snapshot']['pose']))

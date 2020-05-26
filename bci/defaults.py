@@ -19,7 +19,7 @@ DEFAULT_RABBITMQ_SERVER_PORT = 5672
 # Publisher Defaults
 DEFAULT_URL = f'rabbitmq://{DEFAULT_RABBITMQ_SERVER_HOST}:' \
               f'{DEFAULT_RABBITMQ_SERVER_PORT}/'
-DEFAULT_ROOT = '/bcifs'
+DEFAULT_IS_SUBSCRIBER = False
 
 # TODO Do to DB like i did to MQ
 
@@ -41,6 +41,10 @@ DEFAULT_WEB_SERVER_PORT = 8080
 
 # Shared Filesystem
 # TODO Uncomment the next line and comment the line following it
-# FS_ROOT = pathlib.Path('/bcifs')    # Root directory of the shared FS
+# FS_ROOT = pathlib.Path('/tmp/bcifs')    # Root directory of the shared FS
 FS_ROOT = pathlib.Path(__file__).absolute().parent.parent
 BLOBS_DIR = FS_ROOT / 'blobs'       # Directory of the binary data
+DATA_DIR = FS_ROOT / 'data'
+
+# Requests Defaults
+OK_STATUS_CODE = 200

@@ -1,9 +1,13 @@
 import inspect
+import json
 
+from ..defaults import BLOBS_DIR
+from ..protocol.utils import Context
 from ..utils.load import load_modules
 
 modules = []
 parsers = {}
+context = None
 
 
 def load_parsers():
@@ -11,7 +15,7 @@ def load_parsers():
     mapping a parser's field to its function or class.
 
     Returns:
-        dict: Dictionary mapping a parser's field to its function
+        dict: A dictionary mapping a parser's field to its function
         or class.
 
     """
@@ -24,7 +28,7 @@ def load_parsers():
     if not parsers:
         for module in modules:
             for key, value in module.__dict__.items():
-                if key.startswith('parse') and inspect.isfunction(value):
+                if key.startswith('parse_') and inspect.isfunction(value):
                     parsers[value.field] = value
                 if key.endswith('Parser') and inspect.isclass(value):
                     parsers[value.field] = value()
@@ -32,22 +36,34 @@ def load_parsers():
     return parsers
 
 
-def run_parser(topic, context, data):
-    """Runs the parser named `name` on `data`.
+def get_fields():
+    """Gets the available parser names"""
+    global parsers
+    load_parsers()
+    return list(parsers.keys())
+
+
+def parse(field, data):
+    """Parses `data` on `field`.
 
     Args:
-        # parsers (dict): The dictionary mapping a parser's field to its
-        #     function or class. Returned by the `load_parsers` function.
-        topic (str): Parser name.
-        context (Context): Context in the application.
-        data (bytes): Raw data, as consumed from the message queue.
-            The data contains one snapshot alongside the user
-            information.
+        field (str): Snapshot field to parse.
+        data (str): JSON-formatted raw data, as consumed from the
+            message queue. The data contains one snapshot alongside
+            the user information.
 
     Returns:
-        str: The parser result dumped as a JSON string.
+        str: The parser result dumped as a JSON-formatted string.
 
     """
-    # TODO Check this function again
-    global parsers
-    parsers[topic](context, data)
+    global parsers, context
+    load_parsers()
+    if not context:
+        context = Context(BLOBS_DIR)
+    data = json.loads(data)
+    user, snapshot = data['user'], data['snapshot']
+    context.set(user_id=user['user_id'],
+                snapshot_datetime=snapshot['datetime'])
+    parsed_snapshot = parsers[field](context, snapshot)
+    return json.dumps({'user': user,
+                       **parsed_snapshot})

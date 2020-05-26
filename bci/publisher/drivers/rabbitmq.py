@@ -1,7 +1,8 @@
 import pika
 import furl
 
-from ...defaults import DEFAULT_RABBITMQ_SERVER_HOST, DEFAULT_RABBITMQ_SERVER_PORT
+from ...defaults import DEFAULT_RABBITMQ_SERVER_HOST, \
+    DEFAULT_RABBITMQ_SERVER_PORT, DEFAULT_IS_SUBSCRIBER
 
 
 class RabbitmqDriver:
@@ -9,15 +10,12 @@ class RabbitmqDriver:
 
     Attributes:
         url (str): URL of the message queue's server.
-        is_publisher (bool): If true, this object is a publisher.
-        is_subscriber (bool): If true, this object is a subscriber.
+        is_subscriber (bool): If true, this publisher is also a subscriber.
 
     Args:
         url (str): URL of the message queue's server.
-        is_publisher (:obj:`bool`, optional): If true, this object is
-            a publisher. Default to `True`.
-        is_subscriber (:obj:`bool`, optional): If true, this object is
-            a subscriber. Default to `False`.
+        is_subscriber (:obj:`bool`, optional): If true, this publisher
+            is also a subscriber. Default to `DEFAULT_IS_SUBSCRIBER`.
 
     Raises:
         ValueError: If an invalid URL was provided.
@@ -28,14 +26,11 @@ class RabbitmqDriver:
 
     scheme = 'rabbitmq'
 
-    def __init__(self, url, is_publisher=True, is_subscriber=False):
+    def __init__(self, url, is_subscriber=None):
         url = furl.furl(url)
         self.host = url.host or DEFAULT_RABBITMQ_SERVER_HOST
         self.port = url.port or DEFAULT_RABBITMQ_SERVER_PORT
-        self.is_publisher = is_publisher
-        self.is_subscriber = is_subscriber
-        assert self.is_publisher or self.is_subscriber, \
-            'the driver must be either a publisher or a subscriber'
+        self.is_subscriber = is_subscriber or DEFAULT_IS_SUBSCRIBER
 
     def publish(self, message, exchange, routing_key):
         """Publishes `message` to the queues on the exchange, while
@@ -52,7 +47,6 @@ class RabbitmqDriver:
                 is not in the OPEN state.
 
         """
-        assert self.is_publisher, 'cannot publish, this driver is not a publisher'
         connection, channel = self._create_connection(exchange)
         channel.basic_publish(exchange=exchange,
                               routing_key=routing_key,
@@ -76,8 +70,7 @@ class RabbitmqDriver:
                 callback(channel: pika.Channel,
                          method: pika.spec.Basic.Deliver,
                          properties: pika.spec.BasicProperties,
-                         body:bytes,
-                         **kwargs)
+                         body:bytes)
 
         Raises:
             AssertionError: If this driver is not a subscriber.
@@ -126,8 +119,8 @@ class RabbitmqDriver:
 
     @staticmethod
     def _on_message_callback(callback):
-        def wrapper(channel, method, properties, body, **kwargs):
-            callback(channel, method, properties, body, **kwargs)
+        def wrapper(channel, method, properties, body):
+            callback(channel, method, properties, body)
             print(f'[x] Received {body}')
             channel.basic_ack(delivery_tag=method.delivery_tag)
         return wrapper

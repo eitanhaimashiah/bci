@@ -5,22 +5,20 @@ from ...utils.load import load_modules
 modules = []
 
 
-def find_driver(format, stream):
+def find_driver(format):
     """Finds the driver corresponding to `format`.
 
     Args:
         format (str): Format of the sample file.
-        stream (IOBase): Stream representing the sample file.
 
     Returns:
-        The driver object corresponding to `format`.
+        The driver corresponding to `format`.
 
     Raises:
-        ValueError: If `format` is not supported.
+        ValueError: If `format` is unknown.
 
     """
     global modules
-
     if not modules:
         modules = load_modules(__file__)
 
@@ -29,6 +27,6 @@ def find_driver(format, stream):
         for key, value in module.__dict__.items():
             if key.endswith('Driver') and inspect.isclass(value)\
                     and value.format == format:
-                return value(stream)
+                return value
 
     raise ValueError(f'unknown format: {format}')

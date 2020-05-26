@@ -1,30 +1,28 @@
-import json
+import pathlib
 from PIL import Image
 
 
 def parse_color_image(context, snapshot):
-    """Collects the color image of what the user was seeing at a
-    given timestamp from `snapshot`, and publishes the result to a
-    dedicated topic.
+    """Collects the color image of what the user was seeing at a given
+    timestamp from `snapshot`. The image itself is stored to disk.
 
     Args:
         context (bci.protocol.utils.Context): Context in the application.
-        snapshot (bci.protocol.sample.Snapshot): Snapshot uploaded to the server.
+        snapshot (dict): Snapshot as consumed from the message queue
+            and converted to dictionary representation.
+
+    Returns:
+        dict: A dictionary containing `snapshot`'s color image metadata.
 
     """
-    # TODO Check this function again
-    # Save metadata
-    context.save('color_image.json', json.dumps(dict(
-        width=snapshot.color_image.width,
-        height=snapshot.color_image.height,
-        data_path=''
-    )))
-
-    # Save data
-    path = context.path('color_image_data.jpg')
-    size = snapshot.color_image.width, snapshot.color_image.height
-    image = Image.frombytes('RGB', size, snapshot.color_image.data)
-    image.save(path)
+    color_image = snapshot['color_image']
+    size = color_image['width'], color_image['height']
+    data = pathlib.Path(color_image['data']).read_bytes()
+    result_path = context.path('color_image.jpg', is_raw=False)
+    image = Image.frombytes('RGB', size, data)
+    image.save(result_path)
+    color_image['data'] = str(result_path)
+    return color_image
 
 
 parse_color_image.field = 'color_image'

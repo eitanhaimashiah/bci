@@ -4,7 +4,8 @@ from ..reader import Reader
 from ..protocol import sample_pb2 as sample
 from ..protocol.utils.parse_serialize import serialize_to_message
 from ..protocol.utils.display import get_datetime_str
-from ..defaults import DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT
+from ..defaults import DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT, \
+    OK_STATUS_CODE
 
 
 def upload_sample(path, host=None, port=None, format=None):
@@ -36,7 +37,11 @@ def upload_sample(path, host=None, port=None, format=None):
     for snapshot in reader:
         fields = {field: getattr(snapshot, field) for field in config}
         snapshot = sample.Snapshot(datetime=snapshot.datetime, **fields)
-        requests.post(f'{url}/snapshot',
-                      serialize_to_message(reader.user, snapshot))
-        print(f'Sent the snapshot from {get_datetime_str(snapshot)}')
+        response = requests.post(f'{url}/snapshot',
+                                 serialize_to_message(reader.user, snapshot))
+        if response.status_code == OK_STATUS_CODE:  # TODO Replace it with the `bci.utils.cli`'s traceback handling
+            print(f'Sent the snapshot from {get_datetime_str(snapshot.datetime)}')
+        else:
+            print(f'Could not send the snapshot from {get_datetime_str(snapshot.datetime)}')
+
     print('Done')

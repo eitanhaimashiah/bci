@@ -24,21 +24,16 @@ class Reader:
     """
 
     def __init__(self, path, format=None):
-        self.path = str(path)
-        self.format = format or DEFAULT_FORMAT
-        _open = gzip.open if self.path.endswith('.gz') else open
-        self._fp = _open(self.path, 'rb')
+        path = str(path)
+        _open = gzip.open if path.endswith('.gz') else open
+        self._fp = _open(path, 'rb')
         try:
-            self._driver = find_driver(self.format, self._fp)
+            driver_cls = find_driver(format or DEFAULT_FORMAT)
+            self._driver = driver_cls(self._fp)
             self.user = self._driver.read_user()
         except Exception as error:
             self._fp.close()
             raise error
-
-    def __repr__(self):
-        return f'{self.__class__.__name__}(' \
-               f'path={self.path!r}, ' \
-               f'format={self.format!r})'
 
     def __str__(self):
         return f'{self.user}'

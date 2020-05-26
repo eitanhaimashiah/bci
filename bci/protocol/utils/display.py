@@ -7,25 +7,26 @@ def display_user(user):
     """Displays `user` in a human-readable form.
 
     Args:
-        user (bci.protocol.sample.User): User object.
+        user (bci.protocol.sample_pb2.User): User object.
 
     """
-    gender = get_gender_str(user)
+    gender = get_gender_str(user.gender)
     birthday = dt.datetime.fromtimestamp(user.birthday)
-    # TODO Decomment following code. For some reason, datetime format doesn't work on Windows
+    # TODO Decomment following code when working on Windows. For some reason, datetime format doesn't work on Windows
     # print(f'User {user.user_id}: {user.username}, '
     #       f'born {birthday:%B %-d, %Y} ({gender})')
     print(f'User {user.user_id}: {user.username}, '
           f'born {birthday} ({gender})')
 
+
 def display_snapshot(snapshot):
     """Displays `snapshot` in a human-readable form.
 
     Args:
-        snapshot (bci.protocol.sample.Snapshot): Snapshot object.
+        snapshot (bci.protocol.sample_pb2.Snapshot): Snapshot object.
 
     """
-    datetime_str = get_datetime_str(snapshot)
+    datetime_str = get_datetime_str(snapshot.datetime)
     trans = snapshot.pose.translation
     rot = snapshot.pose.rotation
     print(f'Snapshot from {datetime_str} '
@@ -38,31 +39,31 @@ def display_snapshot(snapshot):
           f'depth image.')
 
 
-def get_gender_str(user):
-    """Gets a string representation of the `gender` field in the
-    given user.
+def get_gender_str(user_gender):
+    """Gets a string representation of the given user's gender field.
 
     Args:
-        user (bci.protocol.sample.User): User object.
+        user_gender (typing.Union[int, str]): User's gender.
 
     Returns:
         str: The required string.
 
+    Raises:
+        ValueError: If `user_gender` is unknown.
+
     """
-    if user.gender == sample.User.MALE:
-        return 'male'
-    elif user.gender == sample.User.FEMALE:
-        return 'female'
-    else:
-        return 'other'
+    try:
+        if isinstance(user_gender, int):
+            user_gender = sample.User.Gender.Name(user_gender)
+        return user_gender.lower()
+    except ValueError:
+        raise ValueError(f'unknown gender: {user_gender}')
 
 
-def get_datetime_str(snapshot, purpose='display'):
-    """Gets a string representation of the `datetime` field in the
-    given snapshot.
-
+def get_datetime_str(snapshot_datetime, purpose='display'):
+    """Gets a string representation of the given snapshot's datetime field.
     Args:
-        snapshot (bci.protocol.sample.Snapshot): Snapshot object.
+        snapshot_datetime (typing.Union[int, str])): Snapshot's datetime.
         purpose (str): For what purpose the result will be used.
             Default to 'display'.
 
@@ -70,13 +71,13 @@ def get_datetime_str(snapshot, purpose='display'):
         str: The required string according to `purpose`.
 
     Raises:
-        ValueError: If `purpose` is not supported.
+        ValueError: If `purpose` is unknown.
 
     """
-    timestamp = snapshot.datetime / 1000  # convert timestamp from milliseconds to seconds
+    timestamp = int(snapshot_datetime) / 1000  # convert timestamp from milliseconds to seconds
     datetime = dt.datetime.fromtimestamp(timestamp)
     if purpose == 'display':
-        # TODO Decomment following code. For some reason, datetime format doesn't work on Windows
+        # TODO Decomment following code when working on Windows. For some reason, datetime format doesn't work on Windows
         # return datetime.strftime('%B %-d, %Y at %H:%M:%S.%f')[:-3]
         return datetime
     elif purpose == 'save':

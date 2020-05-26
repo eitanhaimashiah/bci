@@ -1,23 +1,17 @@
-import json
-
-
 def parse_feelings(context, snapshot):
     """Collects the feelings the user was experiencing at a given
-    timestamp from `snapshot`, and publishes the result to a dedicated
-    topic.
+    timestamp from `snapshot`.
 
     Args:
-        context (Context): Context in the application.
-        snapshot (Snapshot): Snapshot uploaded to the server.
+        context (bci.protocol.utils.Context): Context in the application.
+        snapshot (dict): Snapshot as consumed from the message queue
+            and converted to dictionary representation.
+
+    Returns:
+        dict: A dictionary containing `snapshot`'s feeling field.
 
     """
-    # TODO Check this function again
-    context.save('feelings.json', json.dumps(dict(
-        hunger=snapshot.feelings.hunger,
-        thirst=snapshot.feelings.thirst,
-        exhaustion=snapshot.feelings.exhaustion,
-        happiness=snapshot.feelings.happiness
-    )))
+    return snapshot['feelings']
 
 
 parse_feelings.field = 'feelings'

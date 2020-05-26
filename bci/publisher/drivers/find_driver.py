@@ -13,14 +13,13 @@ def find_driver(url):
         url (str): URL of the message queue's server.
 
     Returns:
-        The driver object corresponding to `url`'s scheme.
+        The driver corresponding to `url`'s scheme.
 
     Raises:
-        ValueError: If `url`'s scheme is not supported.
+        ValueError: If `url`'s scheme is unknown.
 
     """
     global modules
-
     if not modules:
         modules = load_modules(__file__)
 
@@ -30,6 +29,6 @@ def find_driver(url):
         for key, value in module.__dict__.items():
             if key.endswith('Driver') and inspect.isclass(value)\
                     and value.scheme == scheme:
-                return value(url)
+                return value
 
     raise ValueError(f'unknown scheme: {scheme}')

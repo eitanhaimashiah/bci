@@ -6,7 +6,7 @@ from ..protocol.utils import Context
 from ..protocol.utils.display import display_snapshot
 from ..protocol.utils.parse_serialize import parse_from_message
 from ..protocol.utils.to_dict import user_to_dict, snapshot_to_dict
-from ..parsers import load_parsers
+from ..parsers import get_fields
 
 
 def run_server(publish, host=None, port=None):
@@ -26,8 +26,7 @@ def run_server(publish, host=None, port=None):
     host = host or DEFAULT_SERVER_HOST
     port = port or DEFAULT_SERVER_PORT
     app = flask.Flask(__name__)
-    parsers = load_parsers()
-    fields = list(parsers.keys())
+    fields = get_fields()
 
     @app.route('/config', methods=['GET'])
     def get_config():
@@ -41,13 +40,19 @@ def run_server(publish, host=None, port=None):
         try:
             user, snapshot = parse_from_message(flask.request.data)
             display_snapshot(snapshot)
-            Context(BLOBS_DIR).save_blobs(user, snapshot)
+            color_image_path, depth_image_path = Context(BLOBS_DIR).save_blobs(user, snapshot)
             publish(json.dumps({
                 'user': user_to_dict(user),
-                'snapshot': snapshot_to_dict(snapshot)
+                'snapshot': snapshot_to_dict(snapshot,
+                                             color_image_path=str(color_image_path),
+                                             depth_image_path=str(depth_image_path))
             }))
             return flask.jsonify({'error': None})
         except Exception as error:
+            # TODO Replace this code with the `bci.utils.cli`'s traceback handling
+            import os
+            import traceback
+            print(os.linesep + traceback.format_exc().strip())
             return flask.jsonify({'error': str(error)}), 500
 
     app.run(host=host, port=port, threaded=True, debug=True)

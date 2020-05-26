@@ -17,10 +17,6 @@ def cli_run_server(host, port, api_host, api_port):
                api_port=api_port)
 
 
-def print_message(message):
-    print(message)
-
-
 if __name__ == '__main__':
     try:
         main(prog_name='bci.gui')
