@@ -7,29 +7,29 @@ from ..publisher import Publisher
 
 
 @main.command('parse')
-@click.argument('field')
+@click.argument('topic')
 @click.argument('path', type=click.Path())
-def cli_parse(field, path):
+def cli_parse(topic, path):
     with open(path, 'r') as f:
         data = f.read()
-    return parse(field=field, data=data)
+    return parse(field=topic, data=data)
 
 
 @main.command('run-parser')
-@click.argument('field')
+@click.argument('topic')
 @click.argument('mq_url', required=False)
-def cli_run_parser(field, mq_url):
+def cli_run_parser(topic, mq_url):
     publisher = Publisher(mq_url, is_subscriber=True)
 
     def consume_callback(channel, method, properties, body):
-        result = parse(field=field, data=body)
+        result = parse(field=topic, data=body)
         publisher.publish(result,
-                          exchange=field,
-                          routing_key=f'{field}.result')
+                          exchange=topic,
+                          routing_key=f'{topic}.result')
 
     publisher.subscribe(exchange='snapshots',
                         routing_key='snapshot.raw',
-                        queue=field,
+                        queue=topic,
                         callback=consume_callback)
 
 

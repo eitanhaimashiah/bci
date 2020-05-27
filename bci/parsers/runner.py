@@ -66,4 +66,7 @@ def parse(field, data):
                 snapshot_datetime=snapshot['datetime'])
     parsed_snapshot = parsers[field](context, snapshot)
     return json.dumps({'user': user,
-                       **parsed_snapshot})
+                       'snapshot': {
+                           'datetime': snapshot['datetime']
+                                    },
+                       'result': parsed_snapshot})
