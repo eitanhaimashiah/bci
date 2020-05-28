@@ -64,7 +64,7 @@ export default class Snapshots extends Component {
             <ul>
               {snapshots.map(snapshot => (
                 <li style={{color: 'blue', textDecoration: 'underline'}} key={snapshot} onClick={()=>{this.pass(snapshot)}}>
-                  {new Date(snapshot*1).toLocaleString()}
+                  {snapshot}
                 </li>
               ))}
             </ul>

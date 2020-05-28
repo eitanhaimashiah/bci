@@ -1,36 +1,30 @@
 import pika
-import furl
-
-from ...defaults import DEFAULT_RABBITMQ_SERVER_HOST, \
-    DEFAULT_RABBITMQ_SERVER_PORT, DEFAULT_IS_SUBSCRIBER
 
 
 class RabbitmqDriver:
-    """Represents a driver to handle a message broker of RabbitMQ scheme.
+    """Represents a RabbitMQ message-broker driver.
 
     Attributes:
-        url (str): URL of the message queue's server.
+        host (str): RabbitMQ server's IP address.
+        port (int): RabbitMQ server's port.
         is_subscriber (bool): If true, this publisher is also a subscriber.
 
     Args:
-        url (str): URL of the message queue's server.
-        is_subscriber (:obj:`bool`, optional): If true, this publisher
-            is also a subscriber. Default to `DEFAULT_IS_SUBSCRIBER`.
+        host (str): RabbitMQ server's IP address.
+        port (int): RabbitMQ server's port.
+        is_subscriber (bool): If true, this publisher is also a subscriber.
 
     Raises:
         ValueError: If an invalid URL was provided.
-        AssertionError: If this driver is not a publisher nor
-            a subscriber.
 
     """
 
     scheme = 'rabbitmq'
 
-    def __init__(self, url, is_subscriber=None):
-        url = furl.furl(url)
-        self.host = url.host or DEFAULT_RABBITMQ_SERVER_HOST
-        self.port = url.port or DEFAULT_RABBITMQ_SERVER_PORT
-        self.is_subscriber = is_subscriber or DEFAULT_IS_SUBSCRIBER
+    def __init__(self, host, port, is_subscriber):
+        self.host = host
+        self.port = port
+        self.is_subscriber = is_subscriber
 
     def publish(self, message, exchange, routing_key):
         """Publishes `message` to the queues on the exchange, while

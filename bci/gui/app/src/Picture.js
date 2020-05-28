@@ -46,7 +46,6 @@ export default class Picture extends Component {
             <div style={ {marginLeft: 550}}>
                 <button style={{position: 'absolute' ,top: 10, right: 10}} onClick ={this.back}>Back</button>
                 <h1 style={{textDecoration: 'underline'}}>{this.state.result}</h1>
-                <h4>{this.state.x+'x'+this.state.y}</h4>
                 <Img style={ { width: 480, height:270 }} src={'http://127.0.0.1:5000/users/'+this.state.user+'/snapshots/'+this.state.snapshot+'/'+this.state.result+'/data'}/>
             </div>
         )

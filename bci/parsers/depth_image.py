@@ -26,8 +26,9 @@ def parse_depth_image(context, snapshot):
     plt.colorbar()
     plt.savefig(result_path)
     plt.close()
-    depth_image['data'] = str(result_path)  # TODO Consider
-    return depth_image
+    return {
+        'path': str(result_path)
+    }
 
 
 parse_depth_image.field = 'depth_image'

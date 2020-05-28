@@ -12,9 +12,8 @@ def display_user(user):
     """
     gender = get_gender_str(user.gender)
     birthday = dt.datetime.fromtimestamp(user.birthday)
-    # TODO Decomment following code when working on Windows. For some reason, datetime format doesn't work on Windows
-    # print(f'User {user.user_id}: {user.username}, '
-    #       f'born {birthday:%B %-d, %Y} ({gender})')
+    print(f'User {user.user_id}: {user.username}, '
+          f'born {birthday:%B %-d, %Y} ({gender})')
     print(f'User {user.user_id}: {user.username}, '
           f'born {birthday} ({gender})')
 
@@ -60,12 +59,14 @@ def get_gender_str(user_gender):
         raise ValueError(f'unknown gender: {user_gender}')
 
 
-def get_datetime_str(snapshot_datetime, purpose='display'):
-    """Gets a string representation of the given snapshot's datetime field.
+def get_datetime_str(timestamp, purpose='display', ms_to_sec=True):
+    """Gets a string representation of `timestamp`.
     Args:
-        snapshot_datetime (typing.Union[int, str])): Snapshot's datetime.
+        timestamp (typing.Union[int, str])): Timestamp.
         purpose (str): For what purpose the result will be used.
-            Default to 'display'.
+            Default to `'display'`.
+        ms_to_sec(bool): If true, convert timestamp from milliseconds
+            to seconds. Default to `True`.
 
     Returns:
         str: The required string according to `purpose`.
@@ -74,12 +75,11 @@ def get_datetime_str(snapshot_datetime, purpose='display'):
         ValueError: If `purpose` is unknown.
 
     """
-    timestamp = int(snapshot_datetime) / 1000  # convert timestamp from milliseconds to seconds
+    if ms_to_sec:
+        timestamp = int(timestamp) / 1000
     datetime = dt.datetime.fromtimestamp(timestamp)
     if purpose == 'display':
-        # TODO Decomment following code when working on Windows. For some reason, datetime format doesn't work on Windows
-        # return datetime.strftime('%B %-d, %Y at %H:%M:%S.%f')[:-3]
-        return datetime
+        return datetime.strftime('%B %-d, %Y at %H:%M:%S.%f')[:-3]
     elif purpose == 'save':
         return datetime.strftime('%Y-%m-%d_%H-%M-%S-%f')
     else:

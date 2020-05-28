@@ -40,7 +40,6 @@ export default class Datetime extends Component {
     
       render() {
         const {results, result, user,snapshot} = this.state;
-        const date = new Date(snapshot*1)
         if( this.state.back === true){
             return (<BrowserRouter><div>
                 <Route exact path={'/users/'+this.state.user+'/snapshots'}>
@@ -73,7 +72,7 @@ export default class Datetime extends Component {
         
           return (<div style={ {marginLeft: 550}}>
               <button style={{position: 'absolute' ,top: 10, right: 10}} onClick ={this.back}>Back</button>
-            <h1 style={{textDecoration: 'underline'}}>{date.toLocaleString()}</h1>
+            <h1 style={{textDecoration: 'underline'}}>{snapshot}</h1>
             <ul>
               {results.map(result => (
                 <li style={{color: 'blue', textDecoration: 'underline'}} key={result} onClick={()=>{this.pass(result)}}>

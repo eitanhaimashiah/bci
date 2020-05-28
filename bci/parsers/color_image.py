@@ -21,8 +21,9 @@ def parse_color_image(context, snapshot):
     result_path = context.path('color_image.jpg', is_raw=False)
     image = Image.frombytes('RGB', size, data)
     image.save(result_path)
-    color_image['data'] = str(result_path)
-    return color_image
+    return {
+        'path': str(result_path)
+    }
 
 
 parse_color_image.field = 'color_image'

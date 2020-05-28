@@ -24,6 +24,7 @@ export default class Inf extends Component {
         return axios
         .get('http://127.0.0.1:5000/users/'+this.state.user,{headers: {'Content-Type': 'multipart/form-data'}},)
           .then(res=> {
+//           console.log(res)
            this.setState (
               { birthday: res.data.birthday, gender: res.data.gender, user_id: res.data.user_id, username: res.data.username}
             )

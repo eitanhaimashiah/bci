@@ -1,22 +1,21 @@
 import inspect
-import furl
 
 from ...utils.load import load_modules
 
 modules = []
 
 
-def find_driver(url):
-    """Finds the driver corresponding to `url`'s scheme.
+def find_driver(scheme):
+    """Finds the driver corresponding to `scheme`.
 
     Args:
-        url (str): URL of the message queue's server.
+        scheme (str): The message queue scheme.
 
     Returns:
-        The driver corresponding to `url`'s scheme.
+        The driver corresponding to `scheme`.
 
     Raises:
-        ValueError: If `url`'s scheme is unknown.
+        ValueError: If `scheme` is unknown.
 
     """
     global modules
@@ -24,7 +23,6 @@ def find_driver(url):
         modules = load_modules(__file__)
 
     # Find the driver corresponding to `scheme`
-    scheme = furl.furl(url).scheme
     for module in modules:
         for key, value in module.__dict__.items():
             if key.endswith('Driver') and inspect.isclass(value)\

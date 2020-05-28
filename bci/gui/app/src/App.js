@@ -27,6 +27,7 @@ class App extends React.Component {
   }
 
   pass(data){
+    sessionStorage.setItem('user', data)
     this.setState (
       { user: data }
     )
@@ -34,7 +35,7 @@ class App extends React.Component {
 
   render() {
     const { error, isLoaded, users } = this.state;
-    if(this.state.user !== null){
+    if(this.state.user !== null ){
       return (<BrowserRouter><div>
                  <Route exact path={'/users/'+this.state.user}>
                   <Inf user={sessionStorage.getItem('user')}/> 

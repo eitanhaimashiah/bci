@@ -43,7 +43,7 @@ def get_fields():
     return list(parsers.keys())
 
 
-def parse(field, data):
+def parse(field, data):  # TODO Consider replacing `field` with `topic`
     """Parses `data` on `field`.
 
     Args:
@@ -64,9 +64,12 @@ def parse(field, data):
     user, snapshot = data['user'], data['snapshot']
     context.set(user_id=user['user_id'],
                 snapshot_datetime=snapshot['datetime'])
-    parsed_snapshot = parsers[field](context, snapshot)
-    return json.dumps({'user': user,
-                       'snapshot': {
-                           'datetime': snapshot['datetime']
-                                    },
-                       'result': parsed_snapshot})
+    result = parsers[field](context, snapshot)
+    return json.dumps({
+        'user': user,
+        'snapshot': {
+            'snapshot_id': snapshot['datetime'],
+            'datetime': snapshot['datetime']
+        },
+        'result': result
+    })
