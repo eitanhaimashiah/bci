@@ -27,7 +27,7 @@ export default class Table extends Component {
     }
     componentDidMount() {
         return axios
-        .get('http://127.0.0.1:5000/users/'+this.state.user+'/snapshots/'+this.state.snapshot+'/'+this.state.result,{headers: {'Content-Type': 'multipart/form-data'}},)
+        .get(sessionStorage.getItem('url')+'/users/'+this.state.user+'/snapshots/'+this.state.snapshot+'/'+this.state.result,{headers: {'Content-Type': 'multipart/form-data'}},)
           .then(res=> {
             if(this.state.result === 'pose')
             {

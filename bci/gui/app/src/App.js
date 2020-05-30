@@ -4,6 +4,8 @@ import './App.css';
 import axios from 'axios';
 import Inf from './Inf'
 import {BrowserRouter, Route, Redirect} from 'react-router-dom';
+import settings from './settings.json'
+sessionStorage.setItem('url', 'http://'+settings['DEFAULT_API_SERVER_HOST']+':'+settings['DEFAULT_API_SERVER_PORT'])
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -18,7 +20,7 @@ class App extends React.Component {
 
   componentDidMount() {
     return axios
-    .get('http://127.0.0.1:5000/users',{headers: {'Content-Type': 'multipart/form-data'}},)
+    .get(sessionStorage.getItem('url')+'/users',{headers: {'Content-Type': 'multipart/form-data'}},)
       .then(res=> {
        this.setState (
           { isLoaded: true,users: res.data.users }
