@@ -24,7 +24,7 @@ def cli_run_parser(topic, mq_url):
     def consume_callback(channel, method, properties, body):
         result = parse(field=topic, data=body)
         publisher.publish(result,
-                          exchange=topic,
+                          exchange='results',
                           routing_key=f'{topic}.result')
 
     publisher.subscribe(exchange='snapshots',

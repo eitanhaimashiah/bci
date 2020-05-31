@@ -1,45 +1,36 @@
+import furl
+
+from .drivers import find_driver
+from ..defaults import DEFAULT_DB_URL
+
+
 class Saver:
     """Represents a database saver.
 
     Attributes:
-        database_url (str): URL of the running database.
+        db_url (str): URL of the running database.
 
     Args:
-        database_url (str): URL of the running database.
+        db_url (:obj:`str`, optional): URL of the running database.
+            Default to `DEFAULT_DB_URL`.
 
     """
 
-    def __init__(self, database_url):
-        self.database_url = database_url
+    def __init__(self, db_url=None):
+        self.db_url = db_url or DEFAULT_DB_URL
+        url = furl.furl(self.db_url)
+        driver_cls = find_driver(url.scheme)
+        self._driver = driver_cls(self.db_url)
 
     def save(self, topic, data):
         """Saves `data` under `topic` in the database.
 
         Args:
-            topic (str): Parser name.
-            data (bytes): Raw data, as consumed from the message queue
+            topic (str): Topic name.
+            data (str): JSON-formatted raw data, as consumed from
+            the message queue. The data contains the result received
+            from the `topic` parser as well as the corresponding
+            snapshot and user information.
 
         """
-        # TODO Complete this function
-        pass
-
-
-# def snapshot_to_metadata_dict(snapshot):
-#     """Converts `snapshot` to a dictionary .
-#     TODO Complete doc (if necessary)
-#
-#     Args:
-#         snapshot:
-#
-#     Returns:
-#
-#     """
-#     return {
-#         'snapshot_id': snapshot.datetime,
-#         'datetime': snapshot.datetime,
-#         'results': get_fields()
-#     }
-
-# context (Context): Context in the application.
-#     context.set(user=data['user'])
-#     context.save('pose.json', json.dumps(data['snapshot']['pose']))
+        self._driver.save(topic, data)

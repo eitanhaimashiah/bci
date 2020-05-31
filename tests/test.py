@@ -8,6 +8,7 @@ from bci.parsers import load_parsers, parse
 from bci.publisher import Publisher
 from bci.protocol.utils.context import Context
 from bci.protocol.utils.to_dict import user_to_dict, snapshot_to_dict
+from bci.saver.drivers import find_driver
 
 ROOT = pathlib.Path(__file__).absolute().parent.parent
 PROTO_SAMPLE_PATH = ROOT / 'sample.mind.gz'
@@ -23,6 +24,7 @@ def subscribe_exchange(field):
                         routing_key=f'{field}.result',
                         queue='saver',
                         callback=consume_callback)
+
 
 if __name__ == '__main__':
     # Test Reader
@@ -73,6 +75,9 @@ if __name__ == '__main__':
 
     # Test Parsers
     # subscribe_exchange('pose')
-    subscribe_exchange('color_image')
+    # subscribe_exchange('color_image')
     # subscribe_exchange('depth_image')
     # subscribe_exchange('feelings')
+
+    # Test Saver's `find_driver`
+    print(find_driver('postgresql'))
