@@ -34,7 +34,8 @@ def run_api_server(host=None, port=None, database_url=None):
     @fc.cross_origin(origin=f'{host}', headers=['Content-Type', 'Authorization'])
     def get_users():
         users = os.listdir(DATA_DIR)
-        return flask.jsonify({'users': users})
+        # return flask.jsonify({'users': users})
+        return flask.jsonify({'users': [{'user_id': 42, 'username': 'eitan'}]})
 
     @app.route('/users/<user_id>', methods=['GET'])
     @fc.cross_origin(origin=f'{host}', headers=['Content-Type', 'Authorization'])

@@ -52,7 +52,7 @@ class App extends React.Component {
         <ul>
           {users.map(user => (
             <li style={{color: 'blue', textDecoration: 'underline'}} key={user} onClick={()=>{this.pass(user)}}>
-              {user}
+              {user.user_id + ': ' + user.username}
             </li>
           ))}
         </ul>
