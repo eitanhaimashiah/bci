@@ -10,6 +10,7 @@ export default class Snapshots extends Component {
         this.state = {
           snapshots: [],
           user: props.user,
+          datetime: null,
           snapshot: null,
           back: false,
         };
@@ -52,7 +53,7 @@ export default class Snapshots extends Component {
         if(snapshot !== null){
           return (<BrowserRouter><div>
                      <Route exact path={'/users/'+user+'/snapshots/'+snapshot}>
-                      <Datetime user={user} snapshot={snapshot}/> 
+                      <Datetime user={user} snapshot={snapshot} datetime={this.state.datetime}/>
                      </Route>
                      <Redirect to={'/users/'+user+'/snapshots/'+snapshot}/>
                    </div>

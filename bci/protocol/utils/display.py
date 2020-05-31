@@ -14,8 +14,6 @@ def display_user(user):
     birthday = dt.datetime.fromtimestamp(user.birthday)
     print(f'User {user.user_id}: {user.username}, '
           f'born {birthday:%B %-d, %Y} ({gender})')
-    print(f'User {user.user_id}: {user.username}, '
-          f'born {birthday} ({gender})')
 
 
 def display_snapshot(snapshot):

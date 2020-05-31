@@ -12,6 +12,7 @@ export default class Datetime extends Component {
           results: [],
           user: props.user,
           snapshot: props.snapshot,
+          datetime: props.datetime,
           result: null,
           back: false,
         };
@@ -72,7 +73,7 @@ export default class Datetime extends Component {
         
           return (<div style={ {marginLeft: 550}}>
               <button style={{position: 'absolute' ,top: 10, right: 10}} onClick ={this.back}>Back</button>
-            <h1 style={{textDecoration: 'underline'}}>{snapshot}</h1>
+            <h1 style={{textDecoration: 'underline'}}>Snapshot {snapshot}: {this.state.datetime}</h1>
             <ul>
               {results.map(result => (
                 <li style={{color: 'blue', textDecoration: 'underline'}} key={result} onClick={()=>{this.pass(result)}}>

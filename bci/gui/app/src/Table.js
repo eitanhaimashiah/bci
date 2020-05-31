@@ -33,7 +33,7 @@ export default class Table extends Component {
             {
                 console.log(res)
                 this.setState (
-               { rw: res.data.rotation.w, rx:res.data.rotation.x, ry: res.data.rotation.y, rz: res.data.rotation.z, tx: res.data.translation.x, ty: res.data.translation.y, tz: res.data.translation.z}
+               { rw: res.data.rotation_w, rx:res.data.rotation_x, ry: res.data.rotation_y, rz: res.data.rotation_z, tx: res.data.translation_x, ty: res.data.translation_y, tz: res.data.translation_z}
              )}
 
            else if(this.state.result === 'feelings')
