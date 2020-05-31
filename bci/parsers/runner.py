@@ -68,7 +68,6 @@ def parse(field, data):  # TODO Consider replacing `field` with `topic`
     return json.dumps({
         'user': user,
         'snapshot': {
-            'snapshot_id': snapshot['datetime'],
             'datetime': snapshot['datetime']
         },
         'result': result

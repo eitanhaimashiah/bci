@@ -24,13 +24,15 @@ python -m bci.parsers run-parser 'depth_image'
 python -m bci.parsers run-parser 'feelings'
 python -m bci.client upload-sample 'sample.mind.gz'
 
-
-#python -m bci.server run-server -p 5000 'rabbitmq://127.0.0.1:6789/'
-
-#python -m bci.parsers run-parser 'pose' 'rabbitmq://127.0.0.1:6789/'
-#python -m bci.saver run-saver  'postgresql://colin:password@127.0.0.1:3469/colin' 'rabbitmq://127.0.0.1:6789/'
-#python -m bci.api run-server -d 'postgresql://colin:password@127.0.0.1:3469/colin'
+# Run servers
+#python -m bci.saver run-saver
+#python -m bci.api run-server
 #python -m bci.gui run-server
 
-#docker run -d -e POSTGRES_PASSWORD=password -e POSTGRES_USER=colin -p  3469:5432 postgres
+# Run containers
+#docker run -d --name db -e POSTGRES_PASSWORD=pass -e POSTGRES_USER=bci -p 5432:5432 postgres
+#docker exec -it db psql -U bci # Run psql terimal with database
+
+# Run containers (Colin's)
 #docker run -d -p 6789:5672 rabbitmq
+#docker run -d -e POSTGRES_PASSWORD=password -e POSTGRES_USER=colin -p  3469:5432 postgres

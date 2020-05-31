@@ -3,6 +3,8 @@ import sys
 
 from . import Saver
 from ..utils.cli import main, log
+from ..publisher import Publisher
+from ..parsers import get_fields
 
 
 @main.command('save')
@@ -13,18 +15,33 @@ def cli_save(database, topic, path):
     with open(path, 'rb') as f:
         data = f.read()
     saver = Saver(database)
-    saver.save(topic, data)
+    saver.save(topic=topic, data=data)
 
 
 @main.command('run-saver')
-@click.argument('db')
-@click.argument('mq')
-def cli_run_saver(db, mq):
-    # TODO Support running the saver as a service, which works with
-    #  a message queue indefinitely; it is then the saver's
-    #  responsibility to subscribe to all the relevant topics it is
-    #  capable of consuming and saving to the database
-    pass
+@click.argument('db_url', required=False)
+@click.argument('mq_url', required=False)
+def cli_run_saver(db_url, mq_url):
+    saver = Saver(db_url)
+    publisher = Publisher(mq_url, is_subscriber=True)
+
+    def consume_callback(channel, method, properties, body):
+        topic, _ = method.routing_key.split('.')
+        saver.save(topic=topic, data=body)
+
+    publisher.subscribe(exchange='results',
+                        routing_key=f'*.result',
+                        queue='saver',
+                        callback=consume_callback)
+
+    # topics = get_fields()
+    # print(topics)
+    # for topic in topics:
+    #     print(f'Subscribed to exchange {topic}')
+    #     publisher.subscribe(exchange=topic,
+    #                         routing_key=f'{topic}.result',
+    #                         queue='saver',
+    #                         callback=consume_callback)
 
 
 if __name__ == '__main__':

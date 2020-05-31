@@ -5,7 +5,7 @@ import flask
 import flask_cors as fc
 
 from ..defaults import DEFAULT_API_SERVER_HOST, DEFAULT_API_SERVER_PORT, \
-    DEFAULT_DATABASE, DATA_DIR
+    DEFAULT_DB_URL, DATA_DIR
 
 
 def run_api_server(host=None, port=None, database_url=None):
@@ -17,12 +17,12 @@ def run_api_server(host=None, port=None, database_url=None):
         port (:obj:`int`, optional): API server's port. Default to
             `DEFAULT_API_SERVER_PORT`.
         database_url (:obj:`str`, optional): URL of the running
-            database. Default to `DEFAULT_DATABASE`
+            database. Default to `DEFAULT_DB_URL`
 
     """
     host = host or DEFAULT_API_SERVER_HOST
     port = port or DEFAULT_API_SERVER_PORT
-    database_url = database_url or DEFAULT_DATABASE
+    database_url = database_url or DEFAULT_DB_URL
     app = flask.Flask(__name__)
     app.config['CORS_HEADERS'] = 'Content-Type'
     fc.CORS(app, resources={'/': {'origins': f'http://{host}:{port}'}})
