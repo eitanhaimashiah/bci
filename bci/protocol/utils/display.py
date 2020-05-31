@@ -75,6 +75,9 @@ def get_datetime_str(timestamp, purpose='display', ms_to_sec=True):
         ValueError: If `purpose` is unknown.
 
     """
+    # TODO split the `fromtimestamp` and `strftime` parts to two
+    #   separte functions (and maybe add third function calling
+    #   them both)
     if ms_to_sec:
         timestamp = int(timestamp) / 1000
     datetime = dt.datetime.fromtimestamp(timestamp)

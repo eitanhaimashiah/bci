@@ -4,7 +4,7 @@ import sqlalchemy as sqla
 import sqlalchemy.orm as sqlao
 import sqlalchemy.ext.declarative as sqlad
 
-from ...utils.sqlalchemy import get_or_create, get_all_as_dict
+from ...utils.sqlalchemy import get_or_create, get_all_as_dict, get_all_table_names
 
 
 class PostgresqlDriver:
@@ -19,6 +19,7 @@ class PostgresqlDriver:
 
     Args:
         db_url (str): URL of the running database.
+        setup (bool): If true, setups the database. Default to `True`.
 
     Raises:
         TODO Check what's the exceptions of `sqlalchemy`
@@ -28,13 +29,15 @@ class PostgresqlDriver:
     scheme = 'postgresql'
     # scheme = 'sql'  # TODO Consider using this scheme instead
 
-    def __init__(self, db_url):
+    def __init__(self, db_url, setup=True):
         self.db_url = db_url
 
-        # Setup the database and create a new session with it
         engine = sqla.create_engine(self.db_url)
-        Base.metadata.drop_all(engine)
-        Base.metadata.create_all(engine)
+
+        if setup:
+            Base.metadata.drop_all(engine)
+            Base.metadata.create_all(engine)
+
         session_cls = sqlao.sessionmaker(bind=engine)
         self.session = session_cls()
 
@@ -94,10 +97,30 @@ class PostgresqlDriver:
 
         self.session.commit()
 
-    def get(self, model):
-        if model == 'users':
+    def get(self, endpoint, **kwargs):
+        if endpoint == 'users':
             return get_all_as_dict(self.session, User,
                                    columns=['user_id', 'username'])
+        elif endpoint == 'user':
+            users = get_all_as_dict(self.session, User, **kwargs)
+            assert len(users) == 1
+            return users[0]
+        elif endpoint == 'snapshots':
+            snapshots = get_all_as_dict(self.session, Snapshot,
+                                        columns=['snapshot_id', 'datetime'],
+                                        **kwargs)
+            # TODO Check if you can write this function better
+            #   in particular use a util from protocol.utils.display
+            for snap in snapshots:
+                snap['datetime'] = snap['datetime'].strftime('%B %-d, %Y at %H:%M:%S.%f')[:-3]
+            return snapshots
+        elif endpoint == 'snapshot':
+            snapshots = get_all_as_dict(self.session, Snapshot, **kwargs)
+            assert len(snapshots) == 1
+            return snapshots[0]
+        else:
+            get_all_table_names(self.engine)
+
 
 
 # DB's Tables
@@ -111,7 +134,7 @@ class User(Base):
                           primary_key=True,
                           nullable=False)
     username = sqla.Column(sqla.String, nullable=False)
-    birthday = sqla.Column(sqla.DateTime)  # TODO Maybe just gets str
+    birthday = sqla.Column(sqla.Date)  # TODO Maybe just gets str
     gender = sqla.Column(sqla.String, nullable=False)  # TODO Check if this is the required type
 
 
