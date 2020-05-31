@@ -1,3 +1,4 @@
+import sqlalchemy as sqla
 import sqlalchemy.sql.expression as sqlae
 
 
@@ -27,16 +28,38 @@ def get_or_create(session, model, defaults=None, **kwargs):
         return instance
 
 
-def get_all_as_dict(session, model, columns):
+def row2dict(r):
+    return {c.name: str(getattr(r, c.name)) for c in r.__table__.columns}
+
+
+def get_all_as_dict(session, model, columns=[], **kwargs):
     """TODO Write doc
 
     Args:
         session:
         model:
         columns:
-
+        kwargs:
     Returns:
 
     """
-    instances = session.query(*columns).select_from(model).all()
-    return [inst._asdict() for inst in instances]
+    # TODO Check if you can write this function better
+    if not columns:
+        instances = session.query(model).filter_by(**kwargs).all()
+        return list(map(row2dict, instances))
+    else:
+        instances = session.query(*columns).select_from(model)\
+            .filter_by(**kwargs).all()
+        return [inst._asdict() for inst in instances]
+
+
+def get_all_table_names(engine):
+    inspector = sqla.inspect(engine)
+    schemas = inspector.get_schema_names()
+
+    for schema in schemas:
+        print("schema: %s" % schema)
+        for table_name in inspector.get_table_names(schema=schema):
+            for column in inspector.get_columns(table_name,
+                                                schema=schema):
+                print("Column: %s" % column)
