@@ -39,3 +39,10 @@ python -m bci.gui run-server
 # Run containers (Colin's)
 #docker run -d -p 6789:5672 rabbitmq
 #docker run -d -e POSTGRES_PASSWORD=password -e POSTGRES_USER=colin -p  3469:5432 postgres
+
+# CLI Commands
+python -m bci.cli get-users
+python -m bci.cli get-user 1
+python -m bci.cli get-snapshots 1
+python -m bci.cli get-snapshot 1 2
+python -m bci.cli get-result 1 2 'pose'
