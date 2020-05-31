@@ -1,6 +1,4 @@
-import os
 import furl
-import json
 import flask
 import flask_cors as fc
 
@@ -30,48 +28,51 @@ def run_api_server(host=None, port=None, database_url=None):
     driver_cls = find_driver(furl.furl(database_url).scheme)
     driver = driver_cls(database_url, setup=False)
 
-    # TODO Replace this hardcoded data loading with DB loading
-    # TODO Handle errors in the GET requests
-
     @app.route('/users', methods=['GET'])
     @fc.cross_origin(origin=f'{host}', headers=['Content-Type', 'Authorization'])
     def get_users():
-        users = json.dumps(driver.get('users'))
-        return flask.jsonify({'users': users})
+        return flask.jsonify({'users': driver.get('users')})
 
     @app.route('/users/<user_id>', methods=['GET'])
     @fc.cross_origin(origin=f'{host}', headers=['Content-Type', 'Authorization'])
     def get_user(user_id):
-        user = json.dumps(driver.get('user', user_id=user_id))
-        return flask.jsonify(user)
+        return flask.jsonify(driver.get('user', user_id=user_id))
 
     @app.route('/users/<user_id>/snapshots', methods=['GET'])
     @fc.cross_origin(origin=f'{host}', headers=['Content-Type', 'Authorization'])
     def get_snapshots(user_id):
-        snapshots = json.dumps(driver.get('snapshots', user_id=user_id))
+        snapshots = driver.get('snapshots', user_id=user_id)
         return flask.jsonify({'snapshots': snapshots})
 
     @app.route('/users/<user_id>/snapshots/<snapshot_id>', methods=['GET'])
     @fc.cross_origin(origin=f'{host}', headers=['Content-Type', 'Authorization'])
     def get_snapshot(user_id, snapshot_id):
-        snapshot_dir = DATA_DIR / user_id / snapshot_id
-        with open(snapshot_dir / 'metadata.json') as f:
-            metadata = json.load(f)
-            return flask.jsonify(metadata)
+        snapshot = driver.get('snapshot',
+                              user_id=user_id,
+                              snapshot_id=snapshot_id)
+        return flask.jsonify(snapshot)
 
     @app.route('/users/<user_id>/snapshots/<snapshot_id>/<result_name>', methods=['GET'])
     @fc.cross_origin(origin=f'{host}', headers=['Content-Type', 'Authorization'])
     def get_result(user_id, snapshot_id, result_name):
-        snapshot_dir = DATA_DIR / user_id / snapshot_id
-        with open(snapshot_dir / f'{result_name}.json') as f:
-            metadata = json.load(f)
-            return flask.jsonify(metadata)
+        if result_name in ['color_image', 'depth_image']:
+            result = {
+                'link': flask.request.base_url + '/data'
+            }
+        else:
+            result = driver.get('result',
+                                result_name=result_name,
+                                snapshot_id=snapshot_id)
+        return flask.jsonify(result)
 
     @app.route('/users/<user_id>/snapshots/<snapshot_id>/<result_name>/data', methods=['GET'])
     @fc.cross_origin(origin=f'{host}', headers=['Content-Type', 'Authorization'])
     def get_result_data(user_id, snapshot_id, result_name):
-        snapshot_dir = DATA_DIR / user_id / snapshot_id
-        return flask.send_file(snapshot_dir / f'{result_name}_data.jpg',
+        assert result_name in ['color_image', 'depth_image']
+        result = driver.get('result',
+                            result_name=result_name,
+                            snapshot_id=snapshot_id)
+        return flask.send_file(result['path'],
                                mimetype='image/jpg')
 
     app.run(host=host, port=port, threaded=True, debug=True)

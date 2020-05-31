@@ -32,34 +32,33 @@ def row2dict(r):
     return {c.name: str(getattr(r, c.name)) for c in r.__table__.columns}
 
 
-def get_all_as_dict(session, model, columns=[], **kwargs):
+def get_all_as_dict(session, model, assert_single=False, cols=[], **kwargs):
     """TODO Write doc
 
     Args:
         session:
         model:
-        columns:
+        assert_single:
+        cols:
         kwargs:
     Returns:
 
     """
-    # TODO Check if you can write this function better
-    if not columns:
-        instances = session.query(model).filter_by(**kwargs).all()
-        return list(map(row2dict, instances))
-    else:
-        instances = session.query(*columns).select_from(model)\
-            .filter_by(**kwargs).all()
-        return [inst._asdict() for inst in instances]
+    if not cols:
+        cols = model.__table__.columns.keys()
+    rows = session.query(*cols).select_from(model) \
+        .filter_by(**kwargs).all()
+    result = [row._asdict() for row in rows]
+    if assert_single:
+        assert len(result) == 1
+        result = result[0]
+    return result
 
-
-def get_all_table_names(engine):
-    inspector = sqla.inspect(engine)
-    schemas = inspector.get_schema_names()
-
-    for schema in schemas:
-        print("schema: %s" % schema)
-        for table_name in inspector.get_table_names(schema=schema):
-            for column in inspector.get_columns(table_name,
-                                                schema=schema):
-                print("Column: %s" % column)
+    # TODO Check if you can replace the above code with the following
+    #  or just improve the above code
+    # rows = session.query(model).filter_by(**kwargs).all()
+    # rows_dict = list(map(row2dict, rows))
+    # if cols:
+    #     rows_dict = list(map(lambda r: {col: r[col] for col in cols},
+    #                          rows_dict))
+    # return rows_dict

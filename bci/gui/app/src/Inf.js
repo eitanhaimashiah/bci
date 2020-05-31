@@ -61,16 +61,15 @@ export default class Inf extends Component {
               </div>
             </BrowserRouter>);
         }
-        const date = new Date(this.state.birthday*1000)
         return (
             <div style={ {marginLeft: 550}}>
                 <button style={{position: 'absolute' ,top: 10, right: 10}} onClick ={this.back}>Back</button>
-                <h1 style={{textDecoration: 'underline'}}>User  {this.state.user}</h1>
+                <h1 style={{textDecoration: 'underline'}}>User  {this.state.user}: {this.state.username}</h1>
                 <table>
                     <tbody>
                         <tr>
                             <td style={{fontWeight: 'bold'}}>{inf[0]}</td>
-                            <td>{date.toLocaleDateString()}</td>
+                            <td>{this.state.birthday}</td>
                         </tr>
                         <tr>
                             <td style={{fontWeight: 'bold'}}>{inf[1]}</td>

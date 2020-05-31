@@ -28,9 +28,10 @@ export default class Snapshots extends Component {
       }
     
       pass(data){
-        this.setState (
-          { snapshot: data }
-        )
+        this.setState ({
+        snapshot: data.snapshot_id,
+        datetime: data.datetime
+        })
       }
     
       back(){
@@ -64,7 +65,7 @@ export default class Snapshots extends Component {
             <ul>
               {snapshots.map(snapshot => (
                 <li style={{color: 'blue', textDecoration: 'underline'}} key={snapshot} onClick={()=>{this.pass(snapshot)}}>
-                  {snapshot}
+                  Snapshot {snapshot.snapshot_id}: {snapshot.datetime}
                 </li>
               ))}
             </ul>

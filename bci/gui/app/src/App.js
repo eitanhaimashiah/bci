@@ -29,10 +29,12 @@ class App extends React.Component {
   }
 
   pass(data){
-    sessionStorage.setItem('user', data)
-    this.setState (
-      { user: data }
-    )
+    sessionStorage.setItem('user', data.user_id)
+    sessionStorage.setItem('username', data.username)
+    this.setState ({
+    user: data.user_id,
+    username: data.username
+    })
   }
 
   render() {
@@ -52,7 +54,7 @@ class App extends React.Component {
         <ul>
           {users.map(user => (
             <li style={{color: 'blue', textDecoration: 'underline'}} key={user} onClick={()=>{this.pass(user)}}>
-              {user.user_id + ': ' + user.username}
+              User {user.user_id}: {user.username}
             </li>
           ))}
         </ul>

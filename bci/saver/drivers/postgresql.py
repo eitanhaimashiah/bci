@@ -4,7 +4,7 @@ import sqlalchemy as sqla
 import sqlalchemy.orm as sqlao
 import sqlalchemy.ext.declarative as sqlad
 
-from ...utils.sqlalchemy import get_or_create, get_all_as_dict, get_all_table_names
+from ...utils.sqlalchemy import get_or_create, get_all_as_dict
 
 
 class PostgresqlDriver:
@@ -98,16 +98,29 @@ class PostgresqlDriver:
         self.session.commit()
 
     def get(self, endpoint, **kwargs):
+        """TODO Write doc.
+
+        Args:
+            endpoint:
+            **kwargs:
+
+        Returns:
+
+        Raises:
+            ValueError: If `endpoint` is unknown.
+
+        """
         if endpoint == 'users':
             return get_all_as_dict(self.session, User,
-                                   columns=['user_id', 'username'])
+                                   cols=['user_id', 'username'])
         elif endpoint == 'user':
-            users = get_all_as_dict(self.session, User, **kwargs)
-            assert len(users) == 1
-            return users[0]
+            user = get_all_as_dict(self.session, User,
+                                   assert_single=True, **kwargs)
+            user['birthday'] = user['birthday'].strftime('%B %-d, %Y')
+            return user
         elif endpoint == 'snapshots':
             snapshots = get_all_as_dict(self.session, Snapshot,
-                                        columns=['snapshot_id', 'datetime'],
+                                        cols=['snapshot_id', 'datetime'],
                                         **kwargs)
             # TODO Check if you can write this function better
             #   in particular use a util from protocol.utils.display
@@ -115,15 +128,21 @@ class PostgresqlDriver:
                 snap['datetime'] = snap['datetime'].strftime('%B %-d, %Y at %H:%M:%S.%f')[:-3]
             return snapshots
         elif endpoint == 'snapshot':
-            snapshots = get_all_as_dict(self.session, Snapshot, **kwargs)
-            assert len(snapshots) == 1
-            return snapshots[0]
+            snapshot = get_all_as_dict(self.session, Snapshot,
+                                       assert_single=True, **kwargs)
+            snapshot['results'] = get_results()
+            return snapshot
+        elif endpoint == 'result':
+            model = result_models[kwargs.pop('result_name')]
+            return get_all_as_dict(self.session, model,
+                                   assert_single=True, **kwargs)
         else:
-            get_all_table_names(self.engine)
+            raise ValueError(f'unknown endpoint: {endpoint}')
 
 
-
-# DB's Tables
+###############
+# DB's Tables #
+###############
 
 Base = sqlad.declarative_base()
 
@@ -134,7 +153,7 @@ class User(Base):
                           primary_key=True,
                           nullable=False)
     username = sqla.Column(sqla.String, nullable=False)
-    birthday = sqla.Column(sqla.Date)  # TODO Maybe just gets str
+    birthday = sqla.Column(sqla.DateTime)  # TODO Maybe just gets str
     gender = sqla.Column(sqla.String, nullable=False)  # TODO Check if this is the required type
 
 
@@ -185,3 +204,16 @@ class Feelings(Base):
     thirst = sqla.Column(sqla.FLOAT)
     exhaustion = sqla.Column(sqla.FLOAT)
     happiness = sqla.Column(sqla.FLOAT)
+
+# TODO Compute `result_models` in a better way (like in parsers)
+
+result_models = {
+    'pose': Pose,
+    'color_image': ColorImage,
+    'depth_image': DepthImage,
+    'feelings': Feelings
+}
+
+def get_results():
+    # return {k: v for (k, v) in Base.metadata.tables if k not in {'users', 'snapshots'}}
+    return list(result_models.keys())
