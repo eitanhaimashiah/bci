@@ -1,11 +1,12 @@
-import pathlib
 import os
+import furl
 import json
 import flask
 import flask_cors as fc
 
 from ..defaults import DEFAULT_API_SERVER_HOST, DEFAULT_API_SERVER_PORT, \
     DEFAULT_DB_URL, DATA_DIR
+from ..saver.drivers import find_driver
 
 
 def run_api_server(host=None, port=None, database_url=None):
@@ -26,6 +27,8 @@ def run_api_server(host=None, port=None, database_url=None):
     app = flask.Flask(__name__)
     app.config['CORS_HEADERS'] = 'Content-Type'
     fc.CORS(app, resources={'/': {'origins': f'http://{host}:{port}'}})
+    driver_cls = find_driver(furl.furl(database_url).scheme)
+    driver = driver_cls(database_url)
 
     # TODO Replace this hardcoded data loading with DB loading
     # TODO Handle errors in the GET requests
@@ -33,9 +36,10 @@ def run_api_server(host=None, port=None, database_url=None):
     @app.route('/users', methods=['GET'])
     @fc.cross_origin(origin=f'{host}', headers=['Content-Type', 'Authorization'])
     def get_users():
-        users = os.listdir(DATA_DIR)
-        # return flask.jsonify({'users': users})
-        return flask.jsonify({'users': [{'user_id': 42, 'username': 'eitan'}]})
+        # users = os.listdir(DATA_DIR)
+        users = json.dumps(driver.get('users'))
+        print(users)
+        return flask.jsonify({'users': users})
 
     @app.route('/users/<user_id>', methods=['GET'])
     @fc.cross_origin(origin=f'{host}', headers=['Content-Type', 'Authorization'])

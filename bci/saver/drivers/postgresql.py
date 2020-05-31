@@ -4,7 +4,7 @@ import sqlalchemy as sqla
 import sqlalchemy.orm as sqlao
 import sqlalchemy.ext.declarative as sqlad
 
-from ...utils.sqlalchemy import get_or_create
+from ...utils.sqlalchemy import get_or_create, get_all_as_dict
 
 
 class PostgresqlDriver:
@@ -93,6 +93,11 @@ class PostgresqlDriver:
             raise ValueError(f'unknown topic: {format}')
 
         self.session.commit()
+
+    def get(self, model):
+        if model == 'users':
+            return get_all_as_dict(self.session, User,
+                                   columns=['user_id', 'username'])
 
 
 # DB's Tables
