@@ -6,3 +6,4 @@ sample.mind.gz
 sample.mind
 blobs/
 /bci/gui/app/node_modules/
+/bci/gui/app/build/

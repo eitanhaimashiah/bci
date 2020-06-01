@@ -1,131 +1,62 @@
-import multiprocessing
-import pathlib
-import subprocess
-import socket
-import struct
-import time
+import flask
 import pytest
-from bci import upload_thought
+import multiprocessing
+import subprocess
+from bci.client import upload_sample
+from bci.utils.snaphosts import create_stream
 
-
-_SERVER_ADDRESS = '127.0.0.1', 5000
-_SERVER_BACKLOG = 1000
-
-_HEADER_FORMAT = 'LLI'
-_HEADER_SIZE = struct.calcsize(_HEADER_FORMAT)
-
-_USER_1 = 1
-_USER_2 = 2
-_THOUGHT_1 = "I'm hungry"
-_THOUGHT_2 = "I'm sleepy"
+_HOST = 'localhost'
+_PORT = 8000
 
 
 @pytest.fixture
-def get_message():
+def server_pipe():
     parent, child = multiprocessing.Pipe()
-    process = multiprocessing.Process(target=_run_server, args=(child,))
+
+    app = flask.Flask(__name__)
+
+    @app.route('/snapshot', methods=['POST'])
+    def snapshot():
+        child.send(flask.request.data)
+        return ""
+
+    process = multiprocessing.Process(
+                    target=_run_server,
+                    args=(child, app))
+
     process.start()
     parent.recv()
     try:
-        def get_message():
-            if not parent.poll(1):
-                raise TimeoutError()
-            return parent.recv()
-        yield get_message
+        yield parent
+
     finally:
         process.terminate()
         process.join()
 
 
-def test_connection(get_message):
-    upload_thought(_SERVER_ADDRESS, _USER_1, _THOUGHT_1)
-    message = get_message()
-    assert message
+def test_upload_sample(server_pipe, tmp_path, user, snapshot):
+    data = create_stream(user, [snapshot]).read()
+    path = tmp_path / 'snapshot.raw'
+    path.write_bytes(data)
+    upload_sample(_HOST, _PORT, str(path))
+    assert server_pipe.recv() == data
 
 
-def test_user_id(get_message):
-    upload_thought(_SERVER_ADDRESS, _USER_1, _THOUGHT_1)
-    user_id, timestamp, thought = get_message()
-    assert user_id == _USER_1
-    upload_thought(_SERVER_ADDRESS, _USER_2, _THOUGHT_1)
-    user_id, timestamp, thought = get_message()
-    assert user_id == _USER_2
+def test_client_cli(server_pipe, tmp_path, user, snapshot):
+    data = create_stream(user, [snapshot]).read()
+    path = tmp_path / 'snapshot.raw'
+    path.write_bytes(data)
 
-
-def test_thought(get_message):
-    upload_thought(_SERVER_ADDRESS, _USER_1, _THOUGHT_1)
-    user_id, timestamp, thought = get_message()
-    assert thought == _THOUGHT_1
-    upload_thought(_SERVER_ADDRESS, _USER_1, _THOUGHT_2)
-    user_id, timestamp, thought = get_message()
-    assert thought == _THOUGHT_2
-
-
-def test_timestamp(get_message):
-    upload_thought(_SERVER_ADDRESS, _USER_1, _THOUGHT_1)
-    user_id, timestamp, thought = get_message()
-    _assert_now(timestamp)
-    upload_thought(_SERVER_ADDRESS, _USER_2, _THOUGHT_2)
-    user_id, timestamp, thought = get_message()
-    _assert_now(timestamp)
-
-
-def test_cli(get_message):
-    host, port = _SERVER_ADDRESS
     process = subprocess.Popen(
-        ['python', '-m', 'bci', 'upload_thought', f'{host}:{port}', str(_USER_1), _THOUGHT_1],
-        stdout = subprocess.PIPE,
+        ['python', '-m', 'bubbles.client', 'upload-sample',
+         '-h', _HOST, '-p', str(_PORT), str(path)]
     )
-    stdout, _ = process.communicate()
-    assert b'done' in stdout.lower()
-    user_id, timestamp, thought = get_message()
-    assert user_id == _USER_1
-    _assert_now(timestamp)
-    assert thought == _THOUGHT_1
+
+    process.communicate()
+
+    assert server_pipe.recv() == data
 
 
-def test_cli_error():
-    host, port = _SERVER_ADDRESS
-    process = subprocess.Popen(
-        ['python', '-m', 'bci', 'upload_thought', f'{host}:{port}', str(_USER_1), _THOUGHT_1],
-        stdout = subprocess.PIPE,
-    )
-    stdout, _ = process.communicate()
-    assert b'error' in stdout.lower()
-
-
-def _run_server(pipe):
-    server = socket.socket()
-    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server.bind(_SERVER_ADDRESS)
-    server.listen(_SERVER_BACKLOG)
-    pipe.send('ready')
-    with server:
-        while True:
-            connection, address = server.accept()
-            _handle_connection(connection, pipe)
-
-
-def _handle_connection(connection, pipe):
-    with connection:
-        header_data = _receive_all(connection, _HEADER_SIZE)
-        user_id, timestamp, size = struct.unpack(_HEADER_FORMAT, header_data)
-        data = _receive_all(connection, size)
-        thought = data.decode()
-        pipe.send([user_id, timestamp, thought])
-
-
-def _receive_all(connection, size):
-    chunks = []
-    while size > 0:
-        chunk = connection.recv(size)
-        if not chunk:
-            raise RuntimeError('incomplete data')
-        chunks.append(chunk)
-        size -= len(chunk)
-    return b''.join(chunks)
-
-
-def _assert_now(timestamp):
-    now = int(time.time())
-    assert abs(now - timestamp) < 5
+def _run_server(pipe, app):
+    pipe.send('read')
+    app.run(host=_HOST, port=_PORT)
