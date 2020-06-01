@@ -2,8 +2,8 @@ import furl
 import flask
 import flask_cors as fc
 
-from ..defaults import DEFAULT_API_SERVER_HOST, DEFAULT_API_SERVER_PORT, \
-    DEFAULT_DB_URL, DATA_DIR
+from ..defaults import DEFAULT_API_SERVER_HOST, \
+    DEFAULT_API_SERVER_PORT, DEFAULT_DB_URL
 from ..saver.drivers import find_driver
 
 

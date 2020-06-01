@@ -7,6 +7,18 @@ setup(
     author='Eitan-Hai Mashiah',
     description='A system that supports a Brain Computer Interface.',
     packages=find_packages(),
-    install_requires=['click', 'flask'],
-    tests_require=['pytest', 'pytest-cov'],
-)
+    # install_requires=['click', 'flask'],
+    install_requires=['click',
+                      'flask',
+                      'Flask-Cors'
+                      'furl',
+                      'matplotlib',
+                      'numpy',
+                      'pika',
+                      'protobuf',
+                      'Pillow',
+                      'requests',
+                      'Werkzeug',
+                      ],
+    tests_require=['pytest', 'pytest-cov'])
+

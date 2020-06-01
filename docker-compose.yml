@@ -1,0 +1,88 @@
+version: "3.7"
+
+x-blob_dir: &blob_dir
+  environment:
+    BLOB_DIR: "/bcifs"
+  volumes:
+    - shared_data:/bcifs
+
+services:
+  rabbitmq:
+    image: rabbitmq
+    ports:
+      - 5672:5672
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: "pass"
+      POSTGRES_USER: "bci"
+    ports:
+      - 5432:5432
+  server:
+    image: bci
+    build: .
+    <<: *blob_dir
+    depends_on:
+      - rabbitmq
+    ports:
+      - 8000:8000
+    environment:
+      PYTHONUNBUFFERED: 1
+    command: ./wait-for-it.sh rabbitmq:5672 -- python3.8 -m bci.server run-server 'rabbitmq://rabbitmq:5672'
+  pose_parser:
+    image: bci
+    <<: *blob_dir
+    depends_on:
+      - server
+      - rabbitmq
+    command: ./wait-for-it.sh rabbitmq:5672 -- python3.8 -m bci.parsers run-parser 'pose' 'rabbitmq://rabbitmq:5672'
+  color_image_parser:
+    image: bci
+    <<: *blob_dir
+    depends_on:
+      - server
+      - rabbitmq
+    command: ./wait-for-it.sh rabbitmq:5672 -- python3.8 -m bci.parsers run-parser 'color_image' 'rabbitmq://rabbitmq:5672'
+  depth_image_parser:
+    image: bci
+    <<: *blob_dir
+    depends_on:
+      - server
+      - rabbitmq
+    command: ./wait-for-it.sh rabbitmq:5672 -- python3.8 -m bci.parsers run-parser 'depth_image' 'rabbitmq://rabbitmq:5672'
+  feelings_parser:
+    image: bci
+    <<: *blob_dir
+    depends_on:
+      - server
+      - rabbitmq
+    command: ./wait-for-it.sh rabbitmq:5672 -- python3.8 -m bci.parsers run-parser 'feelings' 'rabbitmq://rabbitmq:5672'
+  saver:
+    image: bci
+    <<: *blob_dir
+    depends_on:
+      - server
+      - rabbitmq
+      - postgres
+    command: ./wait-for-it.sh rabbitmq:5672 -- python3.8 -m bci.saver run-saver 'postgresql://bci:pass@postgres:5432/bci' 'rabbitmq://rabbitmq:5672/'
+  api:
+    image: bci
+    <<: *blob_dir
+    depends_on:
+      - server
+      - postgres
+    ports:
+      - 5000:5000
+    command: ./wait-for-it.sh rabbitmq:5672 -- python3.8 -m bci.api run-server -d 'postgresql://bci:pass@postgres:5432/bci'
+  gui:
+    image: bci
+    <<: *blob_dir
+    depends_on:
+      - server
+      - postgres
+    ports:
+      - 8080:8080
+    command: ./wait-for-it.sh rabbitmq:5672 -- python3.8 -m bci.gui run-server
+
+volumes:
+  shared_data:

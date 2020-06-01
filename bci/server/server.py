@@ -1,7 +1,7 @@
 import flask
 import json
 
-from ..defaults import DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT, BLOBS_DIR
+from ..defaults import DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT, BLOB_DIR
 from ..protocol.utils import Context
 from ..protocol.utils.display import display_snapshot
 from ..protocol.utils.parse_serialize import parse_from_message
@@ -40,7 +40,7 @@ def run_server(publish, host=None, port=None):
         try:
             user, snapshot = parse_from_message(flask.request.data)
             display_snapshot(snapshot)
-            color_image_path, depth_image_path = Context(BLOBS_DIR).save_blobs(user, snapshot)
+            color_image_path, depth_image_path = Context(BLOB_DIR).save_blobs(user, snapshot)
             publish(json.dumps({
                 'user': user_to_dict(user),
                 'snapshot': snapshot_to_dict(snapshot,

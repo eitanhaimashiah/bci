@@ -115,7 +115,7 @@ class PostgresqlDriver:
                                    cols=['user_id', 'username'])
         elif endpoint == 'user':
             user = get_all_as_dict(self.session, User,
-                                   assert_single=True, **kwargs)
+                                   single=True, **kwargs)
             user['birthday'] = user['birthday'].strftime('%B %-d, %Y')
             return user
         elif endpoint == 'snapshots':
@@ -129,13 +129,13 @@ class PostgresqlDriver:
             return snapshots
         elif endpoint == 'snapshot':
             snapshot = get_all_as_dict(self.session, Snapshot,
-                                       assert_single=True, **kwargs)
+                                       single=True, **kwargs)
             snapshot['results'] = get_results()
             return snapshot
         elif endpoint == 'result':
             model = result_models[kwargs.pop('result_name')]
             return get_all_as_dict(self.session, model,
-                                   assert_single=True, **kwargs)
+                                   single=True, **kwargs)
         else:
             raise ValueError(f'unknown endpoint: {endpoint}')
 

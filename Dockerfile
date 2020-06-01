@@ -1,9 +1,24 @@
-FROM python:3.8
+FROM python:3.8-slim-buster
 
-LABEL maintainer="Eitan-Hai Mashiah"
+RUN apt-get update
+RUN apt-get install -y npm
+RUN apt-get install -yq nodejs build-essential
+RUN npm install -g npm@latest
 
-ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /
-RUN chmod +x /wait-for-it.sh
+EXPOSE 5000 8000 8080
 
-COPY . /bci
-RUN pip install /bci
+ADD scripts/wait-for-it.sh /wait-for-it.sh
+RUN chmod 755 wait-for-it.sh
+
+ADD requirements.txt /requirements.txt
+RUN pip3.8 install -r /requirements.txt
+
+ADD bci /bci
+
+WORKDIR bci/gui/app
+RUN npm install
+RUN npm install react react-dom react-router-dom bootstrap
+RUN npm run build
+WORKDIR /
+
+ENV BLOB_DIR='/bcifs'

@@ -1,0 +1,9 @@
+.git
+.env
+.pytest_cache
+tests
+.travis.yml
+test_sample.mind
+docs
+bci/gui/gui-react/node_modules
+bci/gui/gui-react/build
