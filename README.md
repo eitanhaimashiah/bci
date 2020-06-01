@@ -85,32 +85,9 @@ or `--traceback` flag to show the full traceback when an exception is raised
 (by default, only the error message is printed, and the program exits with a
 non-zero code).
 
+
+
 ### The client
-
-A client which reads snapshots samples, uploading them to the server.
-Available as `colinthecomputer.client`.
-
-Provides the following function:
-
-- `upload_sample`
-  Used to read and upload a sample to the server.
-
-  ```pycon
-  >>> from colinthecomputer.client import upload_sample
-  >>> upload_sample(host='127.0.0.1', port=8000, path='sample.mind.gz')
-  … # upload path to host:port
-  ```
-
-The client also provides the following CLI:
-
-```sh
-$ python -m colinthecomputer.client upload-sample \
-      -h/--host '127.0.0.1'             \
-      -p/--port 8000                    \
-      'snapshot.mind.gz'
-…
-```
-
 
 ### The server
 
