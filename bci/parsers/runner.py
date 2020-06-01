@@ -1,7 +1,7 @@
 import inspect
 import json
 
-from ..defaults import BLOBS_DIR
+from ..defaults import BLOB_DIR
 from ..protocol.utils import Context
 from ..utils.load import load_modules
 
@@ -59,7 +59,7 @@ def parse(field, data):  # TODO Consider replacing `field` with `topic`
     global parsers, context
     load_parsers()
     if not context:
-        context = Context(BLOBS_DIR)
+        context = Context(BLOB_DIR)
     data = json.loads(data)
     user, snapshot = data['user'], data['snapshot']
     context.set(user_id=user['user_id'],

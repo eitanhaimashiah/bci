@@ -4,7 +4,7 @@ from ..reader import Reader
 from ..protocol import sample_pb2 as sample
 from ..protocol.utils.parse_serialize import serialize_to_message
 from ..protocol.utils.display import get_datetime_str
-from ..defaults import DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT, \
+from ..defaults import DEFAULT_SERVER_ACTUAL_HOST, DEFAULT_SERVER_PORT, \
     OK_STATUS_CODE
 
 
@@ -15,7 +15,7 @@ def upload_sample(path, host=None, port=None, format=None):
     Args:
         path (str): Path of the sample file.
         host (:obj:`str`, optional): Server's IP address. Default to
-            `DEFAULT_SERVER_HOST`.
+            `DEFAULT_SERVER_ACTUAL_HOST`.
         port (:obj:`int`, optional): Server's port. Default to
             `DEFAULT_SERVER_PORT`.
         format (:obj:`str`, optional): Format of the sample file.
@@ -29,7 +29,7 @@ def upload_sample(path, host=None, port=None, format=None):
             the server.
 
     """
-    host = host or DEFAULT_SERVER_HOST
+    host = host or DEFAULT_SERVER_ACTUAL_HOST
     port = port or DEFAULT_SERVER_PORT
     url = f'http://{host}:{port}'
     reader = Reader(path, format)

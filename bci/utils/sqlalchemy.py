@@ -32,13 +32,13 @@ def row2dict(r):
     return {c.name: str(getattr(r, c.name)) for c in r.__table__.columns}
 
 
-def get_all_as_dict(session, model, assert_single=False, cols=[], **kwargs):
+def get_all_as_dict(session, model, single=False, cols=[], **kwargs):
     """TODO Write doc
 
     Args:
         session:
         model:
-        assert_single:
+        single:
         cols:
         kwargs:
     Returns:
@@ -49,8 +49,7 @@ def get_all_as_dict(session, model, assert_single=False, cols=[], **kwargs):
     rows = session.query(*cols).select_from(model) \
         .filter_by(**kwargs).all()
     result = [row._asdict() for row in rows]
-    if assert_single:
-        assert len(result) == 1
+    if single and result:
         result = result[0]
     return result
 
