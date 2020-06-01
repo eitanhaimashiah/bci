@@ -11,6 +11,7 @@ from bci.protocol.utils.to_dict import user_to_dict, snapshot_to_dict
 from bci.saver.drivers import find_driver
 
 ROOT = pathlib.Path(__file__).absolute().parent.parent
+PROTO_TEST_SAMPLE_PATH = ROOT / 'test_sample.mind'
 PROTO_SAMPLE_PATH = ROOT / 'sample.mind.gz'
 BINARY_SAMPLE_PATH = ROOT / 'sample.mind'
 BLOBS_DIR = ROOT / 'blobs'
@@ -28,11 +29,12 @@ def subscribe_exchange(field):
 
 if __name__ == '__main__':
     # Test Reader
+    read(PROTO_TEST_SAMPLE_PATH)
     # read(PROTO_SAMPLE_PATH)
     # read(BINARY_SAMPLE_PATH, format='binary')
 
     # Test Context and `save_blobs`
-    # context = Context(BLOBS_DIR)
+    # context = Context(BLOB_DIR)
     # reader = Reader(PROTO_SAMPLE_PATH)
     # display_user(reader.user)
     # for snapshot in reader:
@@ -80,4 +82,4 @@ if __name__ == '__main__':
     # subscribe_exchange('feelings')
 
     # Test Saver's `find_driver`
-    print(find_driver('postgresql'))
+    # print(find_driver('postgresql'))
