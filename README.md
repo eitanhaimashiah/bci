@@ -139,9 +139,9 @@ message queue back. They are located in `bci.parsers`, and expose the
 following API:
 
 ```pycon
->>> from bci.parsers import run_parser
+>>> from bci.parsers import parse
 >>> data = … 
->>> result = run_parser('pose', data)
+>>> result = parse('pose', data)
 ```
 
 Which accepts a parser name and some raw data, as consumed from the 
@@ -158,39 +158,198 @@ message queue (optionally redirecting it to a file). This way of
 invocation runs the parser exactly once; the CLI also supports running 
 the parser as a service, which works with a message queue indefinitely.
 
+```sh
+$ python -m bci.parsers run-parser 'pose' 'rabbitmq://127.0.0.1:5672/'
+```
+
 The current available parsers are:
 
-- *Pose* <br />
+- **Pose** <br />
   Collects the translation and the rotation of the user's head at a 
   given timestamp.
-- *Color Image* <br />
+  
+- **Color Image** <br />
   Collects the color image of what the user was seeing at a given 
   timestamp.
-- *Depth Image* <br />
+  
+- **Depth Image** <br />
   Collects the depth image of what the user was seeing at a given 
   timestamp.
-- *Feelings* <br />
+  
+- **Feelings** <br />
   Collects the feelings the user was experiencing at any timestamp.
 
 #### Adding a new parser
 To add a new parser, write a function starting with `parse_` or a 
-class ending with `Parser` in a new module under the `bci.parsers` 
-subpackage. The function / class should have an attribute named
+class ending with `Parser` in a new module under the `parsers/` 
+subpackage. The function / class should have an attribute named 
+`field`, specifying the part of the snapshot this parser is 
+interested in.
 
+Here's `parsers/translation.py`:
 
+```python
+def parse_pose(context, snapshot):
+    return snapshot['pose']
 
+parse_pose.field = 'pose'
+```
 
+Here's `parsers/color_image.py` (our actual implementation defines
+a function rather than a class):
 
-### The message queue and the parses
-<!-- TODO Provide documentation about how to add a new parser: 
-what would I need to do to be able to have the parse command invoke 
-my own code, and the run-parser command to run it as a service 
-working with a message queue. -->
+```python
+import pathlib
+from PIL import Image
 
-### The database and the savers
+class ColorImageParser:
+    field = 'color_image'
+
+    def parse(self, context, snapshot):
+        color_image = snapshot['color_image']
+        size = color_image['width'], color_image['height']
+        data = pathlib.Path(color_image['data']).read_bytes()
+        result_path = context.path('color_image.jpg', is_raw=False)
+        image = Image.frombytes('RGB', size, data)
+        image.save(result_path)
+        return {
+            'path': str(result_path)
+        }
+```
+
+After adding a parser with a certain field, one can simply use 
+the above Parsers' CLI (commands `parse` and `run-parser`) on 
+that field.
+
+### The saver
+The saver connects to a database, and saves the parsed results 
+to it. It is available as `bci.saver` and exposes the following API:
+
+```pycon
+>>> from bci.saver import Saver
+>>> saver = Saver(database_url)
+>>> data = …
+>>> saver.save('pose', data)
+```
+
+Which connects to a database, accepts a topic name and some data, 
+as consumed from the message queue, and saves it to the database. 
+It should also provide the following CLI:
+
+```sh
+$ python -m bci.saver save                     \
+      -d/--database 'postgresql://bci:pass@127.0.01:5432' \
+     'pose'                                       \
+     'pose.result' 
+```
+
+Which accepts a topic name and a path to some raw data, as consumed 
+from the message queue, and saves it to a database. This way of 
+invocation runs the saver exactly once; the CLI should also support 
+running the saver as a service, which works with a message queue 
+indefinitely; it is then the saver's responsibility to subscribe to 
+all the relevant topics it is capable of consuming and saving to the 
+database.
+
+```sh
+$ python -m bci.saver run-saver  \
+      'postgresql://bci:pass@127.0.01:5432' \
+      'rabbitmq://127.0.0.1:5672/'
+```
+
+Note that the database URL is of the form `DB://USERNAME:PASSWORD@HOST:PORT`.
 
 ### The API
- 
+A RESTful API exposing the data available in the database. It is 
+available as `bci.api` and exposes the following API:
+
+```pycon
+>>> from bci.api import run_api_server
+>>> run_api_server(
+...     host = '127.0.0.1',
+...     port = 5000,
+...     database_url = 'postgresql://bci:pass@127.0.01:5432',
+... )
+… # listen on host:port and serve data from database_url
+```
+
+And the following CLI:
+
+```sh
+$ python -m bci.api run-server \
+      -h/--host '127.0.0.1'       \
+      -p/--port 5000              \
+      -d/--database 'postgresql://bci:pass@127.0.01:5432'
+```
+
+It supports the following endpoints:
+
+- `GET /users`<br />
+  Returns the list of all the supported users, including their IDs and 
+  names only.
+
+- `GET /users/user-id`<br />
+  Returns the specified user's details: ID, name, birthday and gender.
+
+- `GET /users/user-id/snapshots`<br />
+  Returns the list of the specified user's snapshot IDs and datetimes 
+  only.
+
+- `GET /users/user-id/snapshots/snapshot-id`<br />
+  Returns the specified snapshot's details: ID, datetime, and the available 
+  results' names only (e.g. `pose`).
+
+- `GET /users/user-id/snapshots/snapshot-id/result-name`<br />
+  Returns the specified snapshot's result. It currently supports 
+  `pose`, `color-image`, `depth-image` and `feelings`.
+  
+- `GET /users/user-id/snapshots/snapshot-id/result-name/data`<br />
+  Returns the binary data for snapshot's results that have such data.
+  It supports `color-image` and `depth-image`.
+
 ### The CLI
+The CLI consumes the API, and reflects it using command-line.
+
+```sh
+$ python -m cortex.cli get-users
+…
+$ python -m cortex.cli get-user 1
+…
+$ python -m cortex.cli get-snapshots 1
+…
+$ python -m cortex.cli get-snapshot 1 2
+…
+$ python -m cortex.cli get-result 1 2 'pose'
+…
+```
+
+All commands accept the `-h/--host` and `-p/--port` flags to 
+configure the host and port, but default to the API's address.
+The `get-result` command also accepts the `-s/--save` flag that, 
+if specified, receives a path, and saves the result's data to that 
+path.
 
 ### The GUI
+The GUI consume the API and reflects it using a web server (the 
+frontend is based on React). It is available as `bci.gui` and exposes the 
+following API:
+
+```pycon
+>>> from cortex.gui import run_server
+>>> run_server(
+...     host = '127.0.0.1',
+...     port = 8080,
+...     api_host = '127.0.0.1',
+...     api_port = 5000,
+... )
+```
+
+And the following CLI:
+
+```sh
+$ python -m cortex.gui run-server \
+      -h/--host '127.0.0.1'       \
+      -p/--port 8080              \
+      -H/--api-host '127.0.0.1'   \
+      -P/--api-port 5000
+```
