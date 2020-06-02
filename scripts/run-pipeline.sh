@@ -23,8 +23,8 @@ function main {
 		up=$(curl --head 127.0.0.1:8080 | grep '200\ OK' | wc -l)
 		sleep 1
 	done
-	echo 'GUI available at localhost:8080'
-	echo 'Run a client to start the pipeline'
+	echo 'GUI is available at http://localhost:8080'
+	echo 'Run a client to upload a sample'
 }
 
 
