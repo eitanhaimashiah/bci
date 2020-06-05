@@ -5,7 +5,7 @@ import datetime as dt
 
 from bci.saver import Saver
 
-_DB_URL = 'postgresql://test:pass@127.0.0.1:5432'
+_DB_URL = 'postgresql://test:pass@127.0.0.1:3333'
 _TOPICS = ['pose', 'color_image', 'depth_image', 'feelings']
 _ENDPOINT_TOPIC = [
     ('users', None),
