@@ -25,8 +25,8 @@ s = None
 def saver():
     global s
     if not s:
-        _run_postgres()
-        time.sleep(3)
+        # _run_postgres()
+        # time.sleep(3)
         s = Saver(_DB_URL)
     return s
 
@@ -116,10 +116,10 @@ def test_cli(topic, parser_result_json_path):
     assert stderr is None
 
 
-def _run_postgres():
-    process = subprocess.Popen(
-        ['docker', 'run', '-d', '-e', 'POSTGRES_PASSWORD=pass',
-         '-e', 'POSTGRES_USER=test', '-p', '3333:5432', 'postgres'],
-        stdout=subprocess.PIPE,
-    )
-    process.communicate()
+# def _run_postgres():
+#     process = subprocess.Popen(
+#         ['docker', 'run', '-d', '-e', 'POSTGRES_PASSWORD=pass',
+#          '-e', 'POSTGRES_USER=test', '-p', '3333:5432', 'postgres'],
+#         stdout=subprocess.PIPE,
+#     )
+#     process.communicate()
