@@ -5,7 +5,7 @@ import datetime as dt
 
 from bci.saver import Saver
 
-_DB_URL = 'postgresql://test:pass@127.0.0.1:3333'
+_DB_URL = 'postgresql://test:pass@127.0.0.1:5432'
 _TOPICS = ['pose', 'color_image', 'depth_image', 'feelings']
 _ENDPOINT_TOPIC = [
     ('users', None),
@@ -25,8 +25,6 @@ s = None
 def saver():
     global s
     if not s:
-        # _run_postgres()
-        # time.sleep(3)
         s = Saver(_DB_URL)
     return s
 
