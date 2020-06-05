@@ -15,7 +15,6 @@ from bci.protocol.utils.display import get_datetime_str
 from bci.defaults import FS_ROOT
 
 
-
 @pytest.fixture
 def root_dir():
     d = FS_ROOT  # TODO If I can modify `bci.defaults.FS_ROOT` to `tmp_path`, it's better
@@ -105,11 +104,15 @@ def snapshot():
 
 
 @pytest.fixture
-def raw_data_and_path(user, snapshot, root_dir):
-    data = serialize_to_binary_seq(user, snapshot)
+def raw_data(user, snapshot):
+    return serialize_to_binary_seq(user, snapshot)
+
+
+@pytest.fixture
+def raw_data_and_path(raw_data, root_dir):
     path = root_dir / 'sample.mind'
-    path.write_bytes(data)
-    return data, str(path)
+    path.write_bytes(raw_data)
+    return raw_data, str(path)
 
 
 @pytest.fixture
