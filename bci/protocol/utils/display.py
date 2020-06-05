@@ -7,7 +7,7 @@ def display_user(user):
     """Displays `user` in a human-readable form.
 
     Args:
-        user (bci.protocol.sample_pb2.User): User object.
+        user (bci.protocol.sample_pb2.User): User message.
 
     """
     gender = get_gender_str(user.gender)
@@ -20,7 +20,7 @@ def display_snapshot(snapshot):
     """Displays `snapshot` in a human-readable form.
 
     Args:
-        snapshot (bci.protocol.sample_pb2.Snapshot): Snapshot object.
+        snapshot (bci.protocol.sample_pb2.Snapshot): Snapshot message.
 
     """
     datetime_str = get_datetime_str(snapshot.datetime)

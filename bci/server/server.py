@@ -1,10 +1,10 @@
 import flask
 import json
 
-from ..defaults import DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT, BLOB_DIR
+from ..defaults import DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT, BLOBS_DIR
 from ..protocol.utils import Context
 from ..protocol.utils.display import display_snapshot
-from ..protocol.utils.parse_serialize import parse_from_message
+from ..protocol.utils.parse_serialize import parse_from_binary_seq
 from ..protocol.utils.to_dict import user_to_dict, snapshot_to_dict
 from ..parsers import get_fields
 
@@ -38,9 +38,9 @@ def run_server(publish, host=None, port=None):
     @app.route('/snapshot', methods=['POST'])
     def post_snapshot():
         try:
-            user, snapshot = parse_from_message(flask.request.data)
+            user, snapshot = parse_from_binary_seq(flask.request.data)
             display_snapshot(snapshot)
-            color_image_path, depth_image_path = Context(BLOB_DIR).save_blobs(user, snapshot)
+            color_image_path, depth_image_path = Context(BLOBS_DIR).save_blobs(user, snapshot)
             publish(json.dumps({
                 'user': user_to_dict(user),
                 'snapshot': snapshot_to_dict(snapshot,

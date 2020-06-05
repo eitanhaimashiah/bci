@@ -4,6 +4,7 @@
 docs/build/
 sample.mind.gz
 sample.mind
+mini_sample.mind
 blobs/
 /bci/gui/app/node_modules/
 /bci/gui/app/build/

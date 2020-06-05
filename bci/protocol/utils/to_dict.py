@@ -8,7 +8,7 @@ def user_to_dict(user):
     """Converts `user` to a dictionary.
 
     Args:
-        user (bci.protocol.sample_pb2.User): User object.
+        user (bci.protocol.sample_pb2.User): User message.
 
     Returns:
         dict: A dictionary representation of `user`.
@@ -23,7 +23,7 @@ def snapshot_to_dict(snapshot, color_image_path, depth_image_path):
     """Converts `snapshot` to a dictionary.
 
     Args:
-        snapshot (bci.protocol.sample_pb2.Snapshot): Snapshot object.
+        snapshot (bci.protocol.sample_pb2.Snapshot): Snapshot message.
         color_image_path (str): Path to the binary data of the
             `snapshot`'s color image field.
         depth_image_path (str): Path to the binary data of the

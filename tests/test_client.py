@@ -1,62 +1,78 @@
-import flask
 import pytest
-import multiprocessing
+import flask
 import subprocess
-from bci.client import upload_sample
-from bci.utils.snaphosts import create_stream
+import multiprocessing
 
-_HOST = 'localhost'
-_PORT = 8000
+from bci.defaults import DEFAULT_SERVER_ACTUAL_HOST, DEFAULT_SERVER_PORT
+from bci.client import upload_sample
+
+_HOST = DEFAULT_SERVER_ACTUAL_HOST
+_PORT = DEFAULT_SERVER_PORT
 
 
 @pytest.fixture
-def server_pipe():
+def get_message():
     parent, child = multiprocessing.Pipe()
-
-    app = flask.Flask(__name__)
-
-    @app.route('/snapshot', methods=['POST'])
-    def snapshot():
-        child.send(flask.request.data)
-        return ""
-
-    process = multiprocessing.Process(
-                    target=_run_server,
-                    args=(child, app))
-
+    process = multiprocessing.Process(target=_run_server,
+                                      args=(child,))
     process.start()
     parent.recv()
     try:
-        yield parent
+        def get_message():
+            if not parent.poll(1):
+                raise TimeoutError()
+            return parent.recv()
 
+        yield get_message
     finally:
         process.terminate()
         process.join()
 
 
-def test_upload_sample(server_pipe, tmp_path, user, snapshot):
-    data = create_stream(user, [snapshot]).read()
-    path = tmp_path / 'snapshot.raw'
-    path.write_bytes(data)
-    upload_sample(_HOST, _PORT, str(path))
-    assert server_pipe.recv() == data
+def test_upload_sample(get_message, raw_data_and_path):
+    data, path = raw_data_and_path
+    upload_sample(path=path,
+                  host=_HOST,
+                  port=_PORT)
+    assert get_message() == data
 
 
-def test_client_cli(server_pipe, tmp_path, user, snapshot):
-    data = create_stream(user, [snapshot]).read()
-    path = tmp_path / 'snapshot.raw'
-    path.write_bytes(data)
-
+def test_cli(get_message, raw_data_and_path):
+    data, path = raw_data_and_path
     process = subprocess.Popen(
-        ['python', '-m', 'bubbles.client', 'upload-sample',
-         '-h', _HOST, '-p', str(_PORT), str(path)]
+        ['python', '-m', 'bci.client', 'upload-sample',
+         '-h', _HOST, '-p', str(_PORT), str(path)],
+        stdout=subprocess.PIPE,
     )
+    stdout, _ = process.communicate()
+    assert b'done' in stdout.lower()
+    assert get_message() == data
 
-    process.communicate()
 
-    assert server_pipe.recv() == data
+def test_cli_error(raw_data_and_path):
+    data, path = raw_data_and_path
+    process = subprocess.Popen(
+        ['python', '-m', 'bci.client', 'upload-sample',
+         '-h', _HOST, '-p', str(_PORT), str(path)],
+        stdout=subprocess.PIPE,
+    )
+    stdout, _ = process.communicate()
+    assert b'error' in stdout.lower()
 
 
-def _run_server(pipe, app):
+def _run_server(pipe):
+    app = flask.Flask(__name__)
+
+    @app.route('/config', methods=['GET'])
+    def get_config():
+        return flask.jsonify({
+            'fields': ['feelings', 'color_image', 'pose', 'depth_image'],
+            'error': None})
+
+    @app.route('/snapshot', methods=['POST'])
+    def snapshot():
+        pipe.send(flask.request.data)
+        return ""
+
     pipe.send('read')
     app.run(host=_HOST, port=_PORT)

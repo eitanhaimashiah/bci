@@ -1,3 +1,4 @@
+import pathlib
 import numpy as np
 
 from .display import get_datetime_str
@@ -7,9 +8,9 @@ from .display import get_datetime_str
 
 class Context:
     def __init__(self, root):
-        self.root = root
+        self.root = pathlib.Path(root)
         self.user_id = None
-        self.snapshot_id = None
+        self.snapshot_id = None  # TODO Rename it `snapshot_datetime`
 
     def set(self, *, user=None, user_id=None,
             snapshot=None, snapshot_datetime=None):

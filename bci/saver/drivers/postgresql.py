@@ -4,6 +4,7 @@ import sqlalchemy as sqla
 import sqlalchemy.orm as sqlao
 import sqlalchemy.ext.declarative as sqlad
 
+from ...defaults import DEFAULT_SETUP, DEFAULT_STR_DATES
 from ...utils.sqlalchemy import get_or_create, get_all_as_dict
 
 
@@ -19,7 +20,8 @@ class PostgresqlDriver:
 
     Args:
         db_url (str): URL of the running database.
-        setup (bool): If true, setups the database. Default to `True`.
+        setup (bool): If true, setups the running database.
+            Default to `DEFAULT_SETUP`.
 
     Raises:
         TODO Check what's the exceptions of `sqlalchemy`
@@ -29,15 +31,14 @@ class PostgresqlDriver:
     scheme = 'postgresql'
     # scheme = 'sql'  # TODO Consider using this scheme instead
 
-    def __init__(self, db_url, setup=True):
+    def __init__(self, db_url, setup=None):
         self.db_url = db_url
-
         engine = sqla.create_engine(self.db_url)
-
+        if setup is None:
+            setup = DEFAULT_SETUP
         if setup:
             Base.metadata.drop_all(engine)
             Base.metadata.create_all(engine)
-
         session_cls = sqlao.sessionmaker(bind=engine)
         self.session = session_cls()
 
@@ -47,9 +48,9 @@ class PostgresqlDriver:
         Args:
             topic (str): Topic name.
             data (str): JSON-formatted raw data, as consumed from
-            the message queue. The data contains the result received
-            from the `topic` parser as well as the corresponding
-            snapshot and user information.
+                the message queue. The data contains the result received
+                from the `topic` parser as well as the corresponding
+                snapshot and user information.
 
         Raises:
             ValueError: If `topic` is unknown.
@@ -97,26 +98,34 @@ class PostgresqlDriver:
 
         self.session.commit()
 
-    def get(self, endpoint, **kwargs):
-        """TODO Write doc.
+    def get(self, endpoint, str_dates=None, **kwargs):
+        """Gets the rows corresponding to the specified API endpoint
+        from the database.
 
         Args:
-            endpoint:
-            **kwargs:
+            endpoint (str): API endpoint.
+            str_dates (bool): If true, converts the dates in the result
+                to `str`, according to the appropriate format.
+                Default to `DEFAULT_STR_DATES`.
+            kwargs (dict): `enpoint`'s arguments
 
         Returns:
+            dict: A dictionary representation of the required rows.
 
         Raises:
             ValueError: If `endpoint` is unknown.
 
         """
+        if str_dates is None:
+            str_dates = DEFAULT_STR_DATES
         if endpoint == 'users':
             return get_all_as_dict(self.session, User,
                                    cols=['user_id', 'username'])
         elif endpoint == 'user':
             user = get_all_as_dict(self.session, User,
                                    single=True, **kwargs)
-            user['birthday'] = user['birthday'].strftime('%B %-d, %Y')
+            if str_dates:
+                user['birthday'] = user['birthday'].strftime('%B %-d, %Y')
             return user
         elif endpoint == 'snapshots':
             snapshots = get_all_as_dict(self.session, Snapshot,
@@ -124,8 +133,9 @@ class PostgresqlDriver:
                                         **kwargs)
             # TODO Check if you can write this function better
             #   in particular use a util from protocol.utils.display
-            for snap in snapshots:
-                snap['datetime'] = snap['datetime'].strftime('%B %-d, %Y at %H:%M:%S.%f')[:-3]
+            if str_dates:
+                for snap in snapshots:
+                    snap['datetime'] = snap['datetime'].strftime('%B %-d, %Y at %H:%M:%S.%f')[:-3]
             return snapshots
         elif endpoint == 'snapshot':
             snapshot = get_all_as_dict(self.session, Snapshot,

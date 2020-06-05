@@ -1,10 +1,10 @@
 version: "3.7"
 
-x-blob_dir: &blob_dir
+x-blobs-dir: &blobs_dir
   environment:
-    BLOB_DIR: "/bcifs"
+    BLOB_DIR: "/tmp/bcifs/blobs"
   volumes:
-    - shared_data:/bcifs
+    - shared_data:/tmp/bcifs/blobs
 
 services:
   rabbitmq:
@@ -21,7 +21,7 @@ services:
   server:
     image: bci
     build: .
-    <<: *blob_dir
+    <<: *blobs_dir
     depends_on:
       - rabbitmq
     ports:
@@ -31,35 +31,35 @@ services:
     command: ./wait-for-it.sh rabbitmq:5672 -- python3.8 -m bci.server run-server 'rabbitmq://rabbitmq:5672'
   pose_parser:
     image: bci
-    <<: *blob_dir
+    <<: *blobs_dir
     depends_on:
       - server
       - rabbitmq
     command: ./wait-for-it.sh rabbitmq:5672 -- python3.8 -m bci.parsers run-parser 'pose' 'rabbitmq://rabbitmq:5672'
   color_image_parser:
     image: bci
-    <<: *blob_dir
+    <<: *blobs_dir
     depends_on:
       - server
       - rabbitmq
     command: ./wait-for-it.sh rabbitmq:5672 -- python3.8 -m bci.parsers run-parser 'color_image' 'rabbitmq://rabbitmq:5672'
   depth_image_parser:
     image: bci
-    <<: *blob_dir
+    <<: *blobs_dir
     depends_on:
       - server
       - rabbitmq
     command: ./wait-for-it.sh rabbitmq:5672 -- python3.8 -m bci.parsers run-parser 'depth_image' 'rabbitmq://rabbitmq:5672'
   feelings_parser:
     image: bci
-    <<: *blob_dir
+    <<: *blobs_dir
     depends_on:
       - server
       - rabbitmq
     command: ./wait-for-it.sh rabbitmq:5672 -- python3.8 -m bci.parsers run-parser 'feelings' 'rabbitmq://rabbitmq:5672'
   saver:
     image: bci
-    <<: *blob_dir
+    <<: *blobs_dir
     depends_on:
       - server
       - rabbitmq
@@ -67,7 +67,7 @@ services:
     command: ./wait-for-it.sh rabbitmq:5672 -- python3.8 -m bci.saver run-saver 'postgresql://bci:pass@postgres:5432/bci' 'rabbitmq://rabbitmq:5672/'
   api:
     image: bci
-    <<: *blob_dir
+    <<: *blobs_dir
     depends_on:
       - server
       - postgres
@@ -76,7 +76,7 @@ services:
     command: ./wait-for-it.sh rabbitmq:5672 -- python3.8 -m bci.api run-server -d 'postgresql://bci:pass@postgres:5432/bci'
   gui:
     image: bci
-    <<: *blob_dir
+    <<: *blobs_dir
     depends_on:
       - server
       - postgres

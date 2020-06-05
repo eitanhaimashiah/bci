@@ -4,35 +4,53 @@ import io
 from .read import read_user, read_snapshot
 
 
-def serialize_to_message(user, snapshot):
-    """Serializes `user` and `snapshot` to a message.
+def serialize_to_binary_tuple(message):
+    """Serializes `message` to a binary consisting of the message
+    size followed by the serialized message.
 
     Args:
-        user (bci.protocol.sample_pb2.User): User object.
-        snapshot (bci.protocol.sample_pb2.Snapshot): Snapshot object.
+        message (google.protobuf.message.Message): A message.
 
     Returns:
-        bytes: Message serializing `user` and `snapshot`.
+        bytes: The required bytes.
 
     """
-    user_data = user.SerializeToString()
-    user_size = struct.pack('<I', len(user_data))
-    snapshot_data = snapshot.SerializeToString()
-    snapshot_size = struct.pack('<I', len(snapshot_data))
-    return user_size + user_data + snapshot_size + snapshot_data
+    serialized_message = message.SerializeToString()
+    message_size = struct.pack('<I', len(serialized_message))
+    return message_size + serialized_message
 
 
-def parse_from_message(data):
-    """Parses `data` to a tuple composed of User and Snapshot objects.
+def serialize_to_binary_seq(user, *snapshots):
+    """Serializes `user` and `snapshots` to a binary with a sequence
+    of message sizes and serialized messages (of that size), where
+    the first one is `user`, and the rest are `snapshots`.
 
     Args:
-        data (bytes): Binary data composed of a sequence of a message
-            size (uint32) and a message of that size.
+        user (bci.protocol.sample_pb2.User): User message.
+        snapshots (List[bci.protocol.sample_pb2.Snapshot]): List of
+            Snapshot messages.
+
+    Returns: The required bytes.
+
+    """
+    data = serialize_to_binary_tuple(user)
+    for snapshot in snapshots:
+        data += serialize_to_binary_tuple(snapshot)
+    return data
+
+
+def parse_from_binary_seq(data):
+    """Parses `data` to a tuple composed of User and Snapshot messages.
+
+    Args:
+        data (bytes): A binary with a sequence of message sizes and
+            serialized messages (of that size), where where the first
+            one is a User message and the second is a Snapshot message.
 
     Returns:
         tuple: Tuple containing:
-            user (bci.protocol.sample_pb2.User): User object parsed from `data`.
-            snapshot (bci.protocol.sample_pb2.Snapshot): Snapshot object parsed from `data`.
+            user (bci.protocol.sample_pb2.User): User message parsed from `data`.
+            snapshot (bci.protocol.sample_pb2.Snapshot): Snapshot message parsed from `data`.
 
     """
     stream = io.BytesIO(data)

@@ -353,3 +353,26 @@ $ python -m cortex.gui run-server \
       -H/--api-host '127.0.0.1'   \
       -P/--api-port 5000
 ```
+The GUI consume the API and reflects it using a web server (the 
+frontend is based on React). It is available as `bci.gui` and exposes the 
+following API:
+
+```pycon
+>>> from cortex.gui import run_server
+>>> run_server(
+...     host = '127.0.0.1',
+...     port = 8080,
+...     api_host = '127.0.0.1',
+...     api_port = 5000,
+... )
+```
+
+And the following CLI:
+
+```sh
+$ python -m cortex.gui run-server \
+      -h/--host '127.0.0.1'       \
+      -p/--port 8080              \
+      -H/--api-host '127.0.0.1'   \
+      -P/--api-port 5000
+```

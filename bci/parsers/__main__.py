@@ -12,7 +12,7 @@ from ..publisher import Publisher
 def cli_parse(topic, path):
     with open(path, 'r') as f:
         data = f.read()
-    return parse(field=topic, data=data)
+    click.echo(parse(field=topic, data=data))
 
 
 @main.command('run-parser')

@@ -21,4 +21,4 @@ RUN npm install react react-dom react-router-dom bootstrap
 RUN npm run build
 WORKDIR /
 
-ENV BLOB_DIR='/bcifs'
+ENV BLOBS_DIR='/tmp/bcifs/blobs'

@@ -3,13 +3,13 @@ from ...utils.struct import read_struct_by_format
 
 
 def read_user(stream):
-    """Read a User object from `stream`.
+    """Read a User message from `stream`.
 
     Args:
         stream (IOBase): Stream we are reading from.
 
     Returns:
-        bci.protocol.sample.User: The User object read from `stream`.
+        bci.protocol.sample.User: The User message read from `stream`.
 
     """
     data = read_message(stream)
@@ -19,13 +19,13 @@ def read_user(stream):
 
 
 def read_snapshot(stream):
-    """Read a Snapshot object from `stream`.
+    """Read a Snapshot message from `stream`.
 
     Args:
         stream (IOBase): Stream we are reading from.
 
     Returns:
-        bci.protocol.sample.Snapshot: The Snapshot object read from `stream`.
+        bci.protocol.sample.Snapshot: The Snapshot message read from `stream`.
 
     """
     data = read_message(stream)
