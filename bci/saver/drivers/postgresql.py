@@ -149,6 +149,9 @@ class PostgresqlDriver:
         else:
             raise ValueError(f'unknown endpoint: {endpoint}')
 
+    def close(self):
+        self.session.close()
+
 
 ###############
 # DB's Tables #

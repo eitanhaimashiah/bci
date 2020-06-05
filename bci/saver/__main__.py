@@ -12,7 +12,7 @@ from ..parsers import get_fields
 @click.argument('topic')
 @click.argument('path', type=click.Path())
 def cli_save(database, topic, path):
-    with open(path, 'rb') as f:
+    with open(path, 'r') as f:
         data = f.read()
     saver = Saver(database)
     saver.save(topic=topic, data=data)

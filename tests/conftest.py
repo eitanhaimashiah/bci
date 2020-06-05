@@ -64,6 +64,13 @@ def snapshots_dir(root_dir):
 
 
 @pytest.fixture
+def parser_results_dir(root_dir):
+    d = root_dir / 'parser_results'
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
+@pytest.fixture
 def user():
     birthday = int(dt.datetime(1994, 10, 4).timestamp())
     return sample.User(user_id=10,
@@ -124,7 +131,7 @@ def raw_data_json(raw_data_dict):
 
 
 @pytest.fixture
-def raw_data_json_path(snapshots_dir, raw_data_json):
+def raw_data_json_path(raw_data_json, snapshots_dir):
     path = snapshots_dir / 'snapshot.raw'
     path.write_text(raw_data_json, encoding='utf8')
     return str(path)
@@ -158,7 +165,7 @@ def parser_result_json(topic, parser_result):
 
 
 @pytest.fixture
-def parser_result_path(snapshots_dir, parser_result_json):
-    path = snapshots_dir / 'snapshot.raw'
-    path.write_text(raw_data_json, encoding='utf8')
+def parser_result_json_path(topic, parser_result_json, parser_results_dir):
+    path = parser_results_dir / f'{topic}.result'
+    path.write_text(parser_result_json, encoding='utf8')
     return str(path)

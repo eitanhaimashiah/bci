@@ -16,7 +16,8 @@ def test_parse_pose(topic, raw_data_json, parser_result):
 @pytest.mark.parametrize('topic', _TOPICS)
 def test_cli(topic, raw_data_json_path, parser_result):
     process = subprocess.Popen(
-        ['python', '-m', 'bci.parsers', 'parse', topic, raw_data_json_path],
+        ['python', '-m', 'bci.parsers', 'parse',
+         topic, raw_data_json_path],
         stdout=subprocess.PIPE,
     )
     stdout, _ = process.communicate()

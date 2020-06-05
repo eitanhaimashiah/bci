@@ -1,4 +1,5 @@
 import pytest
+import time
 import subprocess
 import datetime as dt
 
@@ -24,15 +25,10 @@ s = None
 def saver():
     global s
     if not s:
+        _run_postgres()
+        time.sleep(3)
         s = Saver(_DB_URL)
     return s
-
-# class MockSession:
-#
-#
-# @pytest.fixture
-# def mock_saver():
-#     pass
 
 
 @pytest.mark.parametrize('topic', _TOPICS)
@@ -104,15 +100,26 @@ def test_get(endpoint, topic, parser_result, saver):
 
     else:
         raise ValueError(f'unknown endpoint: {endpoint}')
+    saver.close()
     assert result == expected_result
 
 
-# @pytest.mark.parametrize('topic', _TOPICS)
-# def test_cli(topic, parser_result_json_path, saver):
-#     process = subprocess.Popen(
-#         ['python', '-m', 'bci.saver', 'save',
-#          '-d', _DB_URL, topic, parser_result_json_path],
-#         stdout=subprocess.PIPE,
-#     )
-#     stdout, _ = process.communicate()
-#     assert json.loads(stdout) == parser_result
+@pytest.mark.parametrize('topic', _TOPICS)
+def test_cli(topic, parser_result_json_path):
+    process = subprocess.Popen(
+        ['python', '-m', 'bci.saver', 'save',
+         '-d', _DB_URL, topic, parser_result_json_path],
+        stdout=subprocess.PIPE,
+    )
+    stdout, stderr = process.communicate()
+    assert stdout == b''
+    assert stderr is None
+
+
+def _run_postgres():
+    process = subprocess.Popen(
+        ['docker', 'run', '-d', '-e', 'POSTGRES_PASSWORD=pass',
+         '-e', 'POSTGRES_USER=test', '-p', '3333:5432', 'postgres'],
+        stdout=subprocess.PIPE,
+    )
+    process.communicate()

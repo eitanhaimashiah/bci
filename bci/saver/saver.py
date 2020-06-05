@@ -60,3 +60,6 @@ class Saver:
         if str_dates is None:
             str_dates = DEFAULT_STR_DATES
         return self._driver.get(endpoint, str_dates=str_dates, **kwargs)
+
+    def close(self):
+        self._driver.close()
