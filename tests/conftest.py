@@ -6,13 +6,14 @@ import sys
 import datetime as dt
 import numpy as np
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import bci.protocol.sample_pb2 as sample
 from bci.protocol.utils.to_dict import user_to_dict, snapshot_to_dict
 from bci.protocol.utils.parse_serialize import serialize_to_binary_seq
 from bci.protocol.utils.display import get_datetime_str
 from bci.defaults import FS_ROOT
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 @pytest.fixture

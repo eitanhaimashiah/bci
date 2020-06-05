@@ -6,7 +6,6 @@ install:
   - python -m grpc.tools.protoc -I=protobuf --python_out=bci/protocol sample.proto
 script:
 #  - flake8
-  - pwd
   - pytest --cov-report term --cov=bci
 after_success:
   - codecov
