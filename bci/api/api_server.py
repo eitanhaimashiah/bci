@@ -75,4 +75,4 @@ def run_api_server(host=None, port=None, database_url=None):
         return flask.send_file(result['path'],
                                mimetype='image/jpg')
 
-    app.run(host=host, port=port, threaded=True, debug=True)
+    app.run(host=host, port=port, threaded=True)

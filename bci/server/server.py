@@ -55,4 +55,4 @@ def run_server(publish, host=None, port=None):
             print(os.linesep + traceback.format_exc().strip())
             return flask.jsonify({'error': str(error)}), 500
 
-    app.run(host=host, port=port, threaded=True, debug=True)
+    app.run(host=host, port=port, threaded=True)
