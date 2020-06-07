@@ -12,6 +12,7 @@ setup(
                       'matplotlib', 'numpy', 'pika', 'protobuf',
                       'Pillow', 'requests', 'psycopg2-binary',
                       'SQLAlchemy'],
-    tests_require=['pytest', 'pytest-cov']
+    # tests_require=['pytest', 'pytest-cov']
+    tests_require=['pytest', 'codecov']
 )
 
