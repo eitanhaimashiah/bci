@@ -19,9 +19,6 @@ def run_server(publish, host=None, port=None):
         port (:obj:`int`, optional): Server's port. Default to
             `DEFAULT_SERVER_PORT`.
 
-    Raises:
-        TODO Complete (can't find flask errors)
-
     """
     host = host or DEFAULT_SERVER_HOST
     port = port or DEFAULT_SERVER_PORT
@@ -49,10 +46,6 @@ def run_server(publish, host=None, port=None):
             }))
             return flask.jsonify({'error': None})
         except Exception as error:
-            # TODO Replace this code with the `bci.utils.cli`'s traceback handling
-            import os
-            import traceback
-            print(os.linesep + traceback.format_exc().strip())
             return flask.jsonify({'error': str(error)}), 500
 
     app.run(host=host, port=port, threaded=True)

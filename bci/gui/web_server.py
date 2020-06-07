@@ -21,11 +21,7 @@ def run_server(host=None, port=None, api_host=None, api_port=None):
     Returns:
         bool: True if successful, False otherwise.
 
-    Raises:
-        TODO Complete
-
     """
-    # TODO Update this function and exclude `data_dir`
     host = host or DEFAULT_WEB_SERVER_HOST
     port = port or DEFAULT_WEB_SERVER_PORT
     api_host = api_host or DEFAULT_WEB_SERVER_ACTUAL_HOST

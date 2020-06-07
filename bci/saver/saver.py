@@ -14,7 +14,7 @@ class Saver:
         db_url (:obj:`str`, optional): URL of the running database.
             Default to `DEFAULT_DB_URL`.
         setup (bool): If true, setups the running database.
-            Default to `DEFAULT_SETUP`. TODO Check if needed
+            Default to `DEFAULT_SETUP`.
 
     """
 

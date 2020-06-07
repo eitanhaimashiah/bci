@@ -25,7 +25,6 @@ def find_driver(scheme):
     # Find the driver corresponding to `scheme`
     for module in modules:
         for key, value in module.__dict__.items():
-            # TODO Change it because now the driver is in a subpackage
             if key.endswith('Driver') and inspect.isclass(value)\
                     and value.scheme == scheme:
                 return value

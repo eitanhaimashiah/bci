@@ -1,63 +1,57 @@
-import sqlalchemy as sqla
 import sqlalchemy.sql.expression as sqlae
 
 
-def get_or_create(session, model, defaults=None, **kwargs):
-    """TODO Write doc
+def get_or_create(session, entity, **kwargs):
+    """Gets the instance of `entity` that meets `kwargs` if one
+    exists; Otherwise, create the required `entity`'s instance and
+    adds it to `session`.
 
     Args:
-        session:
-        model:
-        defaults:
-        **kwargs:
+        session (sqlalchemy.orm.session.Session): The session with
+            which the query will be associated.
+        entity (sqlalchemy.ext.declarative.api.Base): The entity on
+            which the query is performed.
+        kwargs (dict): Keyword expressions to filter by.
 
     Returns:
+        `entity`: The required instance.
 
-        Returns `True` if the instance does not exist.
     """
-    instance = session.query(model).filter_by(**kwargs).first()
+    instance = session.query(entity).filter_by(**kwargs).first()
     if instance:
         return instance
     else:
         params = dict((k, v) for k, v in kwargs.items()
                       if not isinstance(v, sqlae.ClauseElement))
-        params.update(defaults or {})
-        instance = model(**params)
+        instance = entity(**params)
         session.add(instance)
         session.commit()
         return instance
 
 
-def row2dict(r):
-    return {c.name: str(getattr(r, c.name)) for c in r.__table__.columns}
-
-
-def get_all_as_dict(session, model, single=False, cols=[], **kwargs):
-    """TODO Write doc
+def get_all_as_dict(session, entity, single=False, cols=[], **kwargs):
+    """Gets all instances of `entity` that meet `kwargs` in dictionary
+    representation, while selecting `cols`.
 
     Args:
-        session:
-        model:
-        single:
-        cols:
-        kwargs:
+        session (sqlalchemy.orm.session.Session): The session with
+            which the query will be associated.
+        entity (sqlalchemy.ext.declarative.api.Base): The entity on
+            which the query is performed.
+        single (bool): If true, we expect only one instance.
+        cols (list): The columns to select from each instance.
+        kwargs (dict): Keyword expressions to filter by.
+
     Returns:
+        list: The list of the required instances converted to
+            dictionary representation.
 
     """
     if not cols:
-        cols = model.__table__.columns.keys()
-    rows = session.query(*cols).select_from(model) \
+        cols = entity.__table__.columns.keys()
+    instances = session.query(*cols).select_from(entity) \
         .filter_by(**kwargs).all()
-    result = [row._asdict() for row in rows]
+    result = [instance._asdict() for instance in instances]
     if single and result:
         result = result[0]
     return result
-
-    # TODO Check if you can replace the above code with the following
-    #  or just improve the above code
-    # rows = session.query(model).filter_by(**kwargs).all()
-    # rows_dict = list(map(row2dict, rows))
-    # if cols:
-    #     rows_dict = list(map(lambda r: {col: r[col] for col in cols},
-    #                          rows_dict))
-    # return rows_dict

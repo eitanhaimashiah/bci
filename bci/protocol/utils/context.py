@@ -3,14 +3,23 @@ import numpy as np
 
 from .display import get_datetime_str
 
-# TODO Maybe I should document this class
-
 
 class Context:
+    """Represents the current context in the application.
+
+    Attributes:
+        root (str): Root directory.
+        user_id (str): The ID of the current user.
+        snapshot_datetime (str): The datetime of the current snapshot.
+
+    Args:
+        root (str): Root directory.
+
+    """
     def __init__(self, root):
         self.root = pathlib.Path(root)
         self.user_id = None
-        self.snapshot_id = None  # TODO Rename it `snapshot_datetime`
+        self.snapshot_datetime = None
 
     def set(self, *, user=None, user_id=None,
             snapshot=None, snapshot_datetime=None):
@@ -24,15 +33,15 @@ class Context:
             snapshot_datetime = snapshot.datetime
         if snapshot_datetime:
             assert snapshot_datetime, '`datetime` must be given'
-            self.snapshot_id = get_datetime_str(snapshot_datetime,
-                                                purpose='save')
+            self.snapshot_datetime = get_datetime_str(snapshot_datetime,
+                                                      purpose='save')
             # self.snapshot_id = str(snapshot_datetime)
 
     def path(self, filename, is_raw=True):
         assert self.user_id
         path = self.root / self.user_id
-        if self.snapshot_id:
-            path /= self.snapshot_id
+        if self.snapshot_datetime:
+            path /= self.snapshot_datetime
         if is_raw:
             path /= 'raw_data'
         else:

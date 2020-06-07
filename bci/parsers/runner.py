@@ -43,7 +43,7 @@ def get_fields():
     return list(parsers.keys())
 
 
-def parse(field, data):  # TODO Consider replacing `field` with `topic`
+def parse(field, data):
     """Parses `data` on `field`.
 
     Args:

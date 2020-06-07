@@ -39,7 +39,7 @@ def upload_sample(path, host=None, port=None, format=None):
         snapshot = sample.Snapshot(datetime=snapshot.datetime, **fields)
         response = requests.post(f'{url}/snapshot',
                                  serialize_to_binary_seq(reader.user, snapshot))
-        if response.status_code == OK_STATUS_CODE:  # TODO Replace it with the `bci.utils.cli`'s traceback handling
+        if response.status_code == OK_STATUS_CODE:
             print(f'Sent the snapshot from {get_datetime_str(snapshot.datetime)}')
         else:
             print(f'Could not send the snapshot from {get_datetime_str(snapshot.datetime)}')

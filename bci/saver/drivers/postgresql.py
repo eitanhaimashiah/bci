@@ -11,10 +11,6 @@ from ...utils.sqlalchemy import get_or_create, get_all_as_dict
 class PostgresqlDriver:
     """Represents a PostgresSQL database driver.
 
-    TODO If you replace the current driver name with `SqlDriver`,
-        Add this to the above description:
-        It supports any SQL database compatible with `sqlalchemy`.
-
     Attributes:
         db_url (str): URL of the running database.
 
@@ -23,13 +19,9 @@ class PostgresqlDriver:
         setup (bool): If true, setups the running database.
             Default to `DEFAULT_SETUP`.
 
-    Raises:
-        TODO Check what's the exceptions of `sqlalchemy`
-
     """
 
     scheme = 'postgresql'
-    # scheme = 'sql'  # TODO Consider using this scheme instead
 
     def __init__(self, db_url, setup=None):
         self.db_url = db_url
@@ -166,8 +158,8 @@ class User(Base):
                           primary_key=True,
                           nullable=False)
     username = sqla.Column(sqla.String, nullable=False)
-    birthday = sqla.Column(sqla.DateTime)  # TODO Maybe just gets str
-    gender = sqla.Column(sqla.String, nullable=False)  # TODO Check if this is the required type
+    birthday = sqla.Column(sqla.DateTime)
+    gender = sqla.Column(sqla.String, nullable=False)
 
 
 class Snapshot(Base):
@@ -175,7 +167,7 @@ class Snapshot(Base):
     snapshot_id = sqla.Column(sqla.Integer,
                               primary_key=True)
     user_id = sqla.Column(sqla.Integer, sqla.ForeignKey('users.user_id'))
-    datetime = sqla.Column(sqla.DateTime)  # TODO Maybe just gets str
+    datetime = sqla.Column(sqla.DateTime)
 
 
 class Pose(Base):
@@ -220,6 +212,7 @@ class Feelings(Base):
 
 # TODO Compute `result_models` in a better way (like in parsers)
 
+
 result_models = {
     'pose': Pose,
     'color_image': ColorImage,
@@ -227,6 +220,6 @@ result_models = {
     'feelings': Feelings
 }
 
+
 def get_results():
-    # return {k: v for (k, v) in Base.metadata.tables if k not in {'users', 'snapshots'}}
     return list(result_models.keys())
