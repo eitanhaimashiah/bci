@@ -10,7 +10,7 @@ Welcome to BCI's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   bci
+   modules
 
 
 Indices and tables
