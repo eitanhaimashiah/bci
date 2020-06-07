@@ -6,7 +6,7 @@ install:
   - python -m grpc.tools.protoc -I=protobuf --python_out=bci/protocol sample.proto
 script:
   - flake8
-  - pytest --cov-report term --cov=bci
+  - pytest --cov=bci --cov-report term --cov-report xml:coverage.xml
 services:
   - docker
 before_install:
