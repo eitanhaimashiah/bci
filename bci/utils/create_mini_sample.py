@@ -8,7 +8,9 @@ ROOT = pathlib.Path(__file__).absolute().parent.parent
 SAMPLE_FILE = 'sample.mind.gz'
 
 
-def create_mini_sample(root=ROOT, sample_file=SAMPLE_FILE, max_snapshots_num=100):
+def create_mini_sample(root=ROOT,
+                       sample_file=SAMPLE_FILE,
+                       max_snapshots_num=100):
     sample_path = root / sample_file
     mini_sample_path = root / f'mini_{sample_file}'
     reader = Reader(sample_path)

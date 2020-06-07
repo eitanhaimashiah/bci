@@ -5,12 +5,12 @@ install:
   - pip install -r requirements.txt
   - python -m grpc.tools.protoc -I=protobuf --python_out=bci/protocol sample.proto
 script:
-#  - flake8
+  - flake8
   - pytest --cov-report term --cov=bci
 services:
   - docker
 before_install:
-- docker pull postgres
-- docker run -d -e POSTGRES_PASSWORD=pass -e POSTGRES_USER=test -p  3333:5432 postgres
+  - docker pull postgres
+  - docker run -d -e POSTGRES_PASSWORD=pass -e POSTGRES_USER=test -p  3333:5432 postgres
 after_success:
   - codecov

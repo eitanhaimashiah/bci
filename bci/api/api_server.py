@@ -29,31 +29,38 @@ def run_api_server(host=None, port=None, database_url=None):
     driver = driver_cls(database_url, setup=False)
 
     @app.route('/users', methods=['GET'])
-    @fc.cross_origin(origin=f'{host}', headers=['Content-Type', 'Authorization'])
+    @fc.cross_origin(origin=f'{host}',
+                     headers=['Content-Type', 'Authorization'])
     def get_users():
         return flask.jsonify({'users': driver.get('users')})
 
     @app.route('/users/<user_id>', methods=['GET'])
-    @fc.cross_origin(origin=f'{host}', headers=['Content-Type', 'Authorization'])
+    @fc.cross_origin(origin=f'{host}',
+                     headers=['Content-Type', 'Authorization'])
     def get_user(user_id):
         return flask.jsonify(driver.get('user', user_id=user_id))
 
     @app.route('/users/<user_id>/snapshots', methods=['GET'])
-    @fc.cross_origin(origin=f'{host}', headers=['Content-Type', 'Authorization'])
+    @fc.cross_origin(origin=f'{host}',
+                     headers=['Content-Type', 'Authorization'])
     def get_snapshots(user_id):
         snapshots = driver.get('snapshots', user_id=user_id)
         return flask.jsonify({'snapshots': snapshots})
 
-    @app.route('/users/<user_id>/snapshots/<snapshot_id>', methods=['GET'])
-    @fc.cross_origin(origin=f'{host}', headers=['Content-Type', 'Authorization'])
+    @app.route('/users/<user_id>/snapshots/<snapshot_id>',
+               methods=['GET'])
+    @fc.cross_origin(origin=f'{host}',
+                     headers=['Content-Type', 'Authorization'])
     def get_snapshot(user_id, snapshot_id):
         snapshot = driver.get('snapshot',
                               user_id=user_id,
                               snapshot_id=snapshot_id)
         return flask.jsonify(snapshot)
 
-    @app.route('/users/<user_id>/snapshots/<snapshot_id>/<result_name>', methods=['GET'])
-    @fc.cross_origin(origin=f'{host}', headers=['Content-Type', 'Authorization'])
+    @app.route('/users/<user_id>/snapshots/<snapshot_id>/<result_name>',
+               methods=['GET'])
+    @fc.cross_origin(origin=f'{host}',
+                     headers=['Content-Type', 'Authorization'])
     def get_result(user_id, snapshot_id, result_name):
         if result_name in ['color_image', 'depth_image']:
             result = {
@@ -65,8 +72,10 @@ def run_api_server(host=None, port=None, database_url=None):
                                 snapshot_id=snapshot_id)
         return flask.jsonify(result)
 
-    @app.route('/users/<user_id>/snapshots/<snapshot_id>/<result_name>/data', methods=['GET'])
-    @fc.cross_origin(origin=f'{host}', headers=['Content-Type', 'Authorization'])
+    @app.route('/users/<user_id>/snapshots/<snapshot_id>/<result_name>/data',
+               methods=['GET'])
+    @fc.cross_origin(origin=f'{host}',
+                     headers=['Content-Type', 'Authorization'])
     def get_result_data(user_id, snapshot_id, result_name):
         assert result_name in ['color_image', 'depth_image']
         result = driver.get('result',

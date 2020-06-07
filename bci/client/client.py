@@ -38,10 +38,13 @@ def upload_sample(path, host=None, port=None, format=None):
         fields = {field: getattr(snapshot, field) for field in config}
         snapshot = sample.Snapshot(datetime=snapshot.datetime, **fields)
         response = requests.post(f'{url}/snapshot',
-                                 serialize_to_binary_seq(reader.user, snapshot))
+                                 serialize_to_binary_seq(
+                                     reader.user, snapshot))
         if response.status_code == OK_STATUS_CODE:
-            print(f'Sent the snapshot from {get_datetime_str(snapshot.datetime)}')
+            print(f'Sent the snapshot from '
+                  f'{get_datetime_str(snapshot.datetime)}')
         else:
-            print(f'Could not send the snapshot from {get_datetime_str(snapshot.datetime)}')
+            print(f'Could not send the snapshot from '
+                  f'{get_datetime_str(snapshot.datetime)}')
 
     print('Done')

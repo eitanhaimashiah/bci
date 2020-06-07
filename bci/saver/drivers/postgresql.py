@@ -55,8 +55,10 @@ class PostgresqlDriver:
 
         # TODO Add this conversion to `protocol.utils`
         # Convert timestamp columns to datetime
-        user_dict['birthday'] = dt.datetime.fromtimestamp(int(user_dict['birthday']))
-        snapshot_dict['datetime'] = dt.datetime.fromtimestamp(int(snapshot_dict['datetime']) / 1000)
+        user_dict['birthday'] = dt.datetime.fromtimestamp(
+            int(user_dict['birthday']))
+        snapshot_dict['datetime'] = dt.datetime.fromtimestamp(
+            int(snapshot_dict['datetime']) / 1000)
 
         user = get_or_create(self.session, User, **user_dict)
         snapshot = get_or_create(self.session, Snapshot,
@@ -127,7 +129,8 @@ class PostgresqlDriver:
             #   in particular use a util from protocol.utils.display
             if str_dates:
                 for snap in snapshots:
-                    snap['datetime'] = snap['datetime'].strftime('%B %-d, %Y at %H:%M:%S.%f')[:-3]
+                    snap['datetime'] = snap['datetime'].strftime(
+                        '%B %-d, %Y at %H:%M:%S.%f')[:-3]
             return snapshots
         elif endpoint == 'snapshot':
             snapshot = get_all_as_dict(self.session, Snapshot,

@@ -76,10 +76,10 @@ if __name__ == '__main__':
     #     display_snapshot(snapshot)
 
     # Test Parsers
-    # subscribe_exchange('pose')
-    # subscribe_exchange('color_image')
-    # subscribe_exchange('depth_image')
-    # subscribe_exchange('feelings')
+    subscribe_exchange('pose')
+    subscribe_exchange('color_image')
+    subscribe_exchange('depth_image')
+    subscribe_exchange('feelings')
 
     # Test Saver's `find_driver`
     # print(find_driver('postgresql'))

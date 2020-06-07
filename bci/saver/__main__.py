@@ -4,7 +4,6 @@ import sys
 from . import Saver
 from ..utils.cli import main, log
 from ..publisher import Publisher
-from ..parsers import get_fields
 
 
 @main.command('save')
@@ -33,15 +32,6 @@ def cli_run_saver(db_url, mq_url):
                         routing_key=f'*.result',
                         queue='saver',
                         callback=consume_callback)
-
-    # topics = get_fields()
-    # print(topics)
-    # for topic in topics:
-    #     print(f'Subscribed to exchange {topic}')
-    #     publisher.subscribe(exchange=topic,
-    #                         routing_key=f'{topic}.result',
-    #                         queue='saver',
-    #                         callback=consume_callback)
 
 
 if __name__ == '__main__':

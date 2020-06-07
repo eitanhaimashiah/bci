@@ -21,7 +21,11 @@ class BinaryDriver:
         username_size, = self._read_field('<I')
         username = self.stream.read(username_size).decode()
         birthday, = self._read_field('<I')
-        genders = {'m': sample.User.MALE, 'f': sample.User.FEMALE, 'o': sample.User.OTHER}
+        genders = {
+            'm': sample.User.MALE,
+            'f': sample.User.FEMALE,
+            'o': sample.User.OTHER
+        }
         gender = genders[self.stream.read(1).decode()]
         return sample.User(user_id=user_id,
                            username=username,

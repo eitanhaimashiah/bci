@@ -72,14 +72,16 @@ class RabbitmqDriver:
                 is not in the OPEN state.
 
         """
-        assert self.is_subscriber, 'cannot subscribe, this driver is not a subscriber'
+        assert self.is_subscriber, 'cannot subscribe, ' \
+                                   'this driver is not a subscriber'
         connection, channel = self._create_connection(exchange)
         channel.queue_declare(queue, durable=True)
         channel.queue_bind(exchange=exchange,
                            queue=queue,
                            routing_key=routing_key)
         channel.basic_consume(queue=queue,
-                              on_message_callback=RabbitmqDriver._on_message_callback(callback))
+                              on_message_callback=RabbitmqDriver
+                              ._on_message_callback(callback))
         try:
             print('[*] Waiting for messages. To exit press CTRL+C')
             channel.start_consuming()

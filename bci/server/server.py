@@ -37,12 +37,15 @@ def run_server(publish, host=None, port=None):
         try:
             user, snapshot = parse_from_binary_seq(flask.request.data)
             display_snapshot(snapshot)
-            color_image_path, depth_image_path = Context(BLOBS_DIR).save_blobs(user, snapshot)
+            color_image_path, depth_image_path = Context(BLOBS_DIR)\
+                .save_blobs(user, snapshot)
             publish(json.dumps({
                 'user': user_to_dict(user),
                 'snapshot': snapshot_to_dict(snapshot,
-                                             color_image_path=str(color_image_path),
-                                             depth_image_path=str(depth_image_path))
+                                             color_image_path=str(
+                                                 color_image_path),
+                                             depth_image_path=str(
+                                                 depth_image_path))
             }))
             return flask.jsonify({'error': None})
         except Exception as error:

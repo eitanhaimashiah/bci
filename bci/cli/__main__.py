@@ -60,7 +60,8 @@ def cli_get_snapshot(host, port, user_id, snapshot_id):
 def cli_get_result(host, port, save, user_id, snapshot_id, topic):
     host = host or DEFAULT_API_SERVER_ACTUAL_HOST
     port = port or DEFAULT_API_SERVER_PORT
-    url = f'http://{host}:{port}/users/{user_id}/snapshots/{snapshot_id}/{topic}'
+    url = f'http://{host}:{port}/users/{user_id}' \
+          f'/snapshots/{snapshot_id}/{topic}'
     result = requests.get(url)
     if save:
         with open(save, 'wb') as f:

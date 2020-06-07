@@ -24,12 +24,15 @@ class Context:
     def set(self, *, user=None, user_id=None,
             snapshot=None, snapshot_datetime=None):
         if user:
-            assert not user_id, '`user` and `user_id` cannot be specified together'
+            assert not user_id, \
+                '`user` and `user_id` cannot be specified together'
             user_id = user.user_id
         if user_id:
             self.user_id = str(user_id)
         if snapshot:
-            assert not snapshot_datetime, '`snapshot` and `snapshot_datetime` cannot be specified together'
+            assert not snapshot_datetime, \
+                '`snapshot` and `snapshot_datetime` cannot be ' \
+                'specified together'
             snapshot_datetime = snapshot.datetime
         if snapshot_datetime:
             assert snapshot_datetime, '`datetime` must be given'
@@ -60,6 +63,6 @@ class Context:
     def save_blobs(self, user, snapshot):
         self.set(user=user, snapshot=snapshot)
         color_image_path = self.save('color_image', snapshot.color_image.data)
-        depth_image_path = self.path('depth_image.npy')  # TODO Understand how to drop the extention `npy`
+        depth_image_path = self.path('depth_image.npy')
         np.save(depth_image_path, snapshot.depth_image.data)
         return color_image_path, depth_image_path

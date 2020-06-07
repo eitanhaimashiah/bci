@@ -46,7 +46,9 @@ class Reader:
             return self._driver.read_snapshot()
         except Exception:
             self._fp.close()
-            raise StopIteration  # If the last snapshot read failed, just terminate
+
+            # If the last snapshot read failed, just terminate
+            raise StopIteration
 
 
 def read(path, format=None):

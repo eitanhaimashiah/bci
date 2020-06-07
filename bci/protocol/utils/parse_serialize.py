@@ -49,8 +49,10 @@ def parse_from_binary_seq(data):
 
     Returns:
         tuple: Tuple containing:
-            user (bci.protocol.sample_pb2.User): User message parsed from `data`.
-            snapshot (bci.protocol.sample_pb2.Snapshot): Snapshot message parsed from `data`.
+            user (bci.protocol.sample_pb2.User): User message parsed
+                from `data`.
+            snapshot (bci.protocol.sample_pb2.Snapshot): Snapshot
+                message parsed from `data`.
 
     """
     stream = io.BytesIO(data)
