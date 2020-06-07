@@ -1,5 +1,4 @@
 [![build status](https://travis-ci.org/eitanhaimashiah/bci.svg?branch=master)](https://travis-ci.org/eitanhaimashiah/bci)
-[![coverage](https://codecov.io/gh/eitanhaimashiah/bci/branch/master/graph/badge.svg)](https://codecov.io/gh/eitanhaimashiah/bci)
 [![Documentation Status](https://readthedocs.org/projects/bci/badge/?version=latest)](https://bci.readthedocs.io/en/latest/?badge=latest)
 
 # BCI
