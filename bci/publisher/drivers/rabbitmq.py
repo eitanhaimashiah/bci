@@ -62,9 +62,9 @@ class RabbitmqDriver:
             callback (callable): The function to call when consuming
                 with the following signature:
                 callback(channel: pika.Channel,
-                         method: pika.spec.Basic.Deliver,
-                         properties: pika.spec.BasicProperties,
-                         body:bytes)
+                method: pika.spec.Basic.Deliver,
+                properties: pika.spec.BasicProperties,
+                body:bytes)
 
         Raises:
             AssertionError: If this driver is not a subscriber.

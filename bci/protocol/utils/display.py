@@ -59,6 +59,7 @@ def get_gender_str(user_gender):
 
 def get_datetime_str(timestamp, purpose='display', ms_to_sec=True):
     """Gets a string representation of `timestamp`.
+
     Args:
         timestamp (typing.Union[int, str])): Timestamp.
         purpose (str): For what purpose the result will be used.

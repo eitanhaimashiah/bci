@@ -10,9 +10,7 @@ Welcome to BCI's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   api
-   cli
-
+   bci
 
 
 Indices and tables
