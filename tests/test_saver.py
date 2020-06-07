@@ -1,5 +1,4 @@
 import pytest
-import time
 import subprocess
 import datetime as dt
 
@@ -42,8 +41,10 @@ def test_get(endpoint, topic, parser_result, saver):
     snapshot_dict = parser_result['snapshot']
     result_dict = parser_result['result']
     user_dict['user_id'] = int(user_dict['user_id'])
-    user_dict['birthday'] = dt.datetime.fromtimestamp(int(user_dict['birthday']))
-    snapshot_dict['datetime'] = dt.datetime.fromtimestamp(int(snapshot_dict['datetime']) / 1000)
+    user_dict['birthday'] = dt.datetime.fromtimestamp(
+        int(user_dict['birthday']))
+    snapshot_dict['datetime'] = dt.datetime.fromtimestamp(
+        int(snapshot_dict['datetime']) / 1000)
     snapshot_dict['snapshot_id'] = 1
     user_id = user_dict['user_id']
     snapshot_id = snapshot_dict['snapshot_id']
@@ -112,12 +113,3 @@ def test_cli(topic, parser_result_json_path):
     stdout, stderr = process.communicate()
     assert stdout == b''
     assert stderr is None
-
-
-# def _run_postgres():
-#     process = subprocess.Popen(
-#         ['docker', 'run', '-d', '-e', 'POSTGRES_PASSWORD=pass',
-#          '-e', 'POSTGRES_USER=test', '-p', '3333:5432', 'postgres'],
-#         stdout=subprocess.PIPE,
-#     )
-#     process.communicate()
