@@ -7,12 +7,12 @@ install:
 script:
   - flake8
   - pytest --cov-report term --cov=bci
-services:
-  - docker
-before_install:
-  - docker pull postgres
-  - docker run -d -e POSTGRES_PASSWORD=pass -e POSTGRES_USER=test -p  3333:5432 postgres
-env:
-    - CODECOV_TOKEN=ee4a1ad7-919d-4a85-8ced-c9c9b4316b62
+#services:
+#  - docker
+#before_install:
+#  - docker pull postgres
+#  - docker run -d -e POSTGRES_PASSWORD=pass -e POSTGRES_USER=test -p  3333:5432 postgres
+#env:
+#    - CODECOV_TOKEN=ee4a1ad7-919d-4a85-8ced-c9c9b4316b62
 after_success:
   - codecov
