@@ -23,7 +23,7 @@ urllib3==1.25.7
 wcwidth==0.1.7
 zipp==0.6.0
 Click==7.0
-codecov==2.0.15
+codecov==2.0.16
 coverage==4.5.4
 Flask==1.1.1
 flask-cors==3.0.8
